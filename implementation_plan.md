@@ -415,6 +415,39 @@ All technology decisions have been made and documented in [technology_decisions.
 
 ---
 
+## Future Enhancements (Post-Release)
+
+These are improvements discovered during development that are worth pursuing after the core game is complete and validated.
+
+### Enhancement 1: Zundo - Undo/Redo for Beatmap Editor
+**Source**: Context7 MCP documentation lookup (2026-02-15)
+
+**What**: [Zundo](https://github.com/charkour/zundo) is a lightweight Zustand middleware that adds time-travel (undo/redo) functionality to any Zustand store. Benchmark score: 84.3, High source reputation.
+
+**Why**: The beatmap editor (Phase 11) will involve placing and removing notes on a timeline. Without undo/redo, a misplaced note requires manual deletion and re-placement — frustrating during creative work. Zundo plugs directly into our existing Zustand store with minimal code.
+
+**Implementation**:
+```javascript
+import { temporal } from 'zundo'
+
+const useEditorStore = create(
+  temporal((set) => ({
+    notes: [],
+    addNote: (note) => set((state) => ({ notes: [...state.notes, note] })),
+    removeNote: (id) => set((state) => ({ notes: state.notes.filter(n => n.id !== id) })),
+  }))
+)
+
+// Ctrl+Z / Ctrl+Y support:
+const { undo, redo } = useEditorStore.temporal.getState()
+```
+
+**When**: After Phase 11 (Visual Editor) or Phase 12 (Recording Mode) is working. Add as a polish step for the editor experience.
+
+**Estimated Complexity**: Low - Drop-in middleware, ~30 minutes to integrate.
+
+---
+
 ## Phase Dependencies
 
 ```

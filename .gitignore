@@ -10,6 +10,9 @@ dist-electron/
 .env
 .env.local
 
+# MCP config (contains API keys)
+.mcp.json
+
 # OS files
 .DS_Store
 Thumbs.db
