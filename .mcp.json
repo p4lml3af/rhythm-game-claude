@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {
+        "CONTEXT7_API_KEY": ""
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    },
+    "google-developer-knowledge": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@google/mcp-server-developer-knowledge"
+      ],
+      "env": {
+        "GOOGLE_API_KEY": ""
+      }
+    },
+    "aws-documentation": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@aws/mcp-server-aws-documentation"
+      ]
+    }
+  }
+}

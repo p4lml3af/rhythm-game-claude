@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(NODE_ENV=development npx electron:*)",
+      "Bash(node -e:*)",
+      "Bash(npx electron --version)",
+      "Bash(./node_modules/.bin/electron:*)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\BlingBling\\Desktop\\Claude\\Beat Game\\src"
+    ]
+  }
+}
