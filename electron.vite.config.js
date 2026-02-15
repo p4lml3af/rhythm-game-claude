@@ -4,12 +4,23 @@ import { resolve } from 'path'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin({ exclude: ['electron'] }), bytecodePlugin()],
+    plugins: [externalizeDepsPlugin(), bytecodePlugin()],
     build: {
       outDir: 'dist-electron',
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/main/index.js')
+        }
+      }
+    }
+  },
+  preload: {
+    plugins: [externalizeDepsPlugin()],
+    build: {
+      outDir: 'dist-electron',
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/preload/index.js')
         }
       }
     }

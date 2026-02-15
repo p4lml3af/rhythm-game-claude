@@ -1,10 +1,16 @@
 import React from 'react'
+import { GameCanvas } from './components/GameCanvas'
 
 function App() {
   return (
-    <div className="app">
-      <h1>Dad Farted</h1>
-      <p>Minimal Beat Trainer - Phase 1 Setup Complete</p>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      backgroundColor: '#000000'
+    }}>
+      <GameCanvas width={800} height={600} />
     </div>
   )
 }
