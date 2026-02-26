@@ -65,3 +65,67 @@ describe('InputHandler', () => {
     expect(callback).not.toHaveBeenCalled();
   });
 });
+
+describe('InputHandler — onKeyRelease', () => {
+  let pressCallback: ReturnType<typeof vi.fn>;
+  let releaseCallback: ReturnType<typeof vi.fn>;
+  let handler: InputHandler;
+
+  beforeEach(() => {
+    pressCallback = vi.fn();
+    releaseCallback = vi.fn();
+    handler = new InputHandler(pressCallback, releaseCallback);
+    handler.start();
+  });
+
+  afterEach(() => {
+    handler.stop();
+  });
+
+  function fireKeyDown(code: string) {
+    window.dispatchEvent(new KeyboardEvent('keydown', { code }));
+  }
+
+  function fireKeyUp(code: string) {
+    window.dispatchEvent(new KeyboardEvent('keyup', { code }));
+  }
+
+  it('fires onKeyRelease for left lane (D key released)', () => {
+    fireKeyDown('KeyD');
+    fireKeyUp('KeyD');
+    expect(releaseCallback).toHaveBeenCalledWith('left');
+  });
+
+  it('fires onKeyRelease for right lane (K key released)', () => {
+    fireKeyDown('KeyK');
+    fireKeyUp('KeyK');
+    expect(releaseCallback).toHaveBeenCalledWith('right');
+  });
+
+  it('does NOT fire onKeyRelease for non-lane keys', () => {
+    fireKeyDown('KeyA');
+    fireKeyUp('KeyA');
+    expect(releaseCallback).not.toHaveBeenCalled();
+  });
+
+  it('onKeyRelease is optional (constructor works without it)', () => {
+    const simpleHandler = new InputHandler(pressCallback);
+    simpleHandler.start();
+    fireKeyDown('KeyD');
+    fireKeyUp('KeyD');
+    // Should not throw — release callback is null
+    expect(pressCallback).toHaveBeenCalledWith('left');
+    simpleHandler.stop();
+  });
+
+  it('hold sequence: keydown D → keyup D fires both callbacks', () => {
+    fireKeyDown('KeyD');
+    expect(pressCallback).toHaveBeenCalledWith('left');
+
+    fireKeyUp('KeyD');
+    expect(releaseCallback).toHaveBeenCalledWith('left');
+
+    expect(pressCallback).toHaveBeenCalledTimes(1);
+    expect(releaseCallback).toHaveBeenCalledTimes(1);
+  });
+});

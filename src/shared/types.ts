@@ -24,6 +24,13 @@ export interface GameState {
   goodHits: number;       // Hits within ±100ms but outside ±50ms
   combo: number;          // Current combo streak
   maxCombo: number;       // Longest combo this session
+  activeHoldNotes: ActiveHoldNote[];  // Hold notes currently being tracked
 }
 
 export type HitResult = 'perfect' | 'good' | 'miss';
+
+export interface ActiveHoldNote {
+  note: Note;                    // The hold note being tracked
+  startResult: HitResult;        // How accurately the initial press was (perfect/good)
+  isHeld: boolean;               // Is the key currently held down?
+}

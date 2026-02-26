@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { calculateNoteY, drawNote, isNoteOnScreen, isNoteInHitZone } from '../noteRenderer';
+import { calculateNoteY, drawNote, isNoteOnScreen, isNoteInHitZone, calculateHoldNoteEndY } from '../noteRenderer';
 import { HIT_ZONE_Y, CANVAS_HEIGHT } from '../rendering';
 import type { Note } from '../../../shared/types';
 
@@ -112,5 +112,102 @@ describe('isNoteInHitZone', () => {
 
   it('returns false 51px below hit zone', () => {
     expect(isNoteInHitZone(HIT_ZONE_Y + 51)).toBe(false); // 501
+  });
+});
+
+// Hold Note Rendering
+describe('drawNote — hold notes', () => {
+  const mockCtx = {
+    fillStyle: '',
+    fillRect: vi.fn(),
+  } as unknown as CanvasRenderingContext2D;
+
+  beforeEach(() => {
+    mockCtx.fillStyle = '';
+    vi.mocked(mockCtx.fillRect).mockClear();
+  });
+
+  it('hold note uses red color (#FF0000)', () => {
+    const note: Note = { timestamp: 1, lane: 'left', type: 'hold', duration: 1.0 };
+    drawNote(mockCtx, note, 100);
+    expect(mockCtx.fillStyle).toBe('#FF0000');
+  });
+
+  it('hold note height = duration * NOTE_SCROLL_SPEED + NOTE_HEIGHT', () => {
+    const note: Note = { timestamp: 1, lane: 'left', type: 'hold', duration: 1.0 };
+    drawNote(mockCtx, note, 450);
+    // duration=1.0 * 200px/s = 200px hold height, total rect = 200 + 20 = 220
+    expect(mockCtx.fillRect).toHaveBeenCalledWith(
+      expect.any(Number), // x
+      450 - 200,          // y - holdHeight
+      50,                 // width
+      220                 // holdHeight + NOTE_HEIGHT
+    );
+  });
+
+  it('hold note extends upward from start position', () => {
+    const note: Note = { timestamp: 1, lane: 'right', type: 'hold', duration: 1.5 };
+    drawNote(mockCtx, note, 450);
+    // holdHeight = 1.5 * 200 = 300, rect starts at 450 - 300 = 150
+    expect(mockCtx.fillRect).toHaveBeenCalledWith(
+      expect.any(Number),
+      150,  // y - holdHeight
+      50,
+      320   // 300 + 20
+    );
+  });
+
+  it('tap note rendering unchanged (regression check)', () => {
+    const note: Note = { timestamp: 1, lane: 'left', type: 'tap' };
+    drawNote(mockCtx, note, 100);
+    expect(mockCtx.fillStyle).toBe('#0000FF');
+    expect(mockCtx.fillRect).toHaveBeenCalledWith(
+      expect.any(Number),
+      100,  // y (no upward extension)
+      50,
+      20    // NOTE_HEIGHT only
+    );
+  });
+});
+
+// Hold Note Viewport Culling
+describe('isNoteOnScreen — hold notes', () => {
+  it('hold note partially on screen (body visible) → visible', () => {
+    // y=610 (below screen) but holdHeight=200 means top at 410 (on screen)
+    expect(isNoteOnScreen(610, 200)).toBe(true);
+  });
+
+  it('hold note fully above screen → not visible', () => {
+    // y=-30, holdHeight=0 → top at -30, below -NOTE_HEIGHT threshold
+    expect(isNoteOnScreen(-30, 0)).toBe(false);
+  });
+
+  it('hold note with long duration still culled when fully above', () => {
+    // y=-500, holdHeight=400 → top at -900, well above screen
+    expect(isNoteOnScreen(-500, 400)).toBe(false);
+  });
+});
+
+// calculateHoldNoteEndY
+describe('calculateHoldNoteEndY', () => {
+  it('end Y for 1s hold note equals calculateNoteY(timestamp + duration)', () => {
+    const note: Note = { timestamp: 5.0, lane: 'left', type: 'hold', duration: 1.0 };
+    const endY = calculateHoldNoteEndY(note, 4.0);
+    const expected = calculateNoteY(6.0, 4.0);
+    expect(endY).toBe(expected);
+  });
+
+  it('end Y equals calculateNoteY(timestamp + duration, currentTime)', () => {
+    const note: Note = { timestamp: 10.0, lane: 'right', type: 'hold', duration: 2.0 };
+    const endY = calculateHoldNoteEndY(note, 8.0);
+    const expected = calculateNoteY(12.0, 8.0);
+    expect(endY).toBe(expected);
+  });
+
+  it('works for fractional durations', () => {
+    const note: Note = { timestamp: 5.0, lane: 'left', type: 'hold', duration: 0.75 };
+    const endY = calculateHoldNoteEndY(note, 5.0);
+    const expected = calculateNoteY(5.75, 5.0);
+    expect(endY).toBe(expected);
   });
 });

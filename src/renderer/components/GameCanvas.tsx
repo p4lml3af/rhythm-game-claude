@@ -4,7 +4,7 @@ import { AudioManager } from '../game/audioManager';
 import { loadBeatmap } from '../game/beatmapLoader';
 import { calculateNoteY, drawNote, isNoteOnScreen } from '../game/noteRenderer';
 import { InputHandler } from '../game/inputHandler';
-import { checkHit, findNoteInHitZone, calculateAccuracy } from '../game/hitDetection';
+import { checkHit, findNoteInHitZone, calculateAccuracy, checkHoldStart, checkHoldComplete, findHoldNoteInHitZone } from '../game/hitDetection';
 import type { Beatmap, GameState } from '../../shared/types';
 
 interface GameCanvasProps {
@@ -30,7 +30,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     perfectHits: 0,
     goodHits: 0,
     combo: 0,
-    maxCombo: 0
+    maxCombo: 0,
+    activeHoldNotes: []
   });
   const [lastHit, setLastHit] = useState<{ result: string; time: number } | null>(null);
 
@@ -76,24 +77,54 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
         drawLanes(ctx);
         drawHitZones(ctx);
 
-        // Render notes
+        // Render notes and check hold note auto-completion
         if (beatmap && audioManager) {
           const currentTime = audioManager.getCurrentTime();
 
           beatmap.notes.forEach((note) => {
             const y = calculateNoteY(note.timestamp, currentTime);
+            const holdHeight = (note.type === 'hold' && note.duration)
+              ? note.duration * 200 : 0; // 200 = NOTE_SCROLL_SPEED
 
-            if (isNoteOnScreen(y)) {
+            if (isNoteOnScreen(y, holdHeight)) {
               drawNote(ctx, note, y);
             }
           });
+
+          // Auto-complete hold notes when key is still held past end time
+          if (gameState.activeHoldNotes.length > 0) {
+            gameState.activeHoldNotes.forEach(holdNote => {
+              if (holdNote.isHeld && checkHoldComplete(holdNote.note, currentTime)) {
+                setGameState(prev => {
+                  const active = prev.activeHoldNotes.find(h => h === holdNote);
+                  if (!active) return prev; // Already removed
+
+                  const newState = { ...prev };
+                  if (active.startResult === 'perfect') {
+                    newState.perfectHits++;
+                  } else {
+                    newState.goodHits++;
+                  }
+                  newState.hits++;
+                  newState.combo++;
+                  newState.maxCombo = Math.max(newState.maxCombo, newState.combo);
+                  newState.accuracy = calculateAccuracy(newState.hits, newState.misses);
+                  newState.activeHoldNotes = prev.activeHoldNotes.filter(h => h !== holdNote);
+                  setLastHit({ result: 'HELD!', time: Date.now() });
+                  return newState;
+                });
+              }
+            });
+          }
         }
 
         // Draw hit feedback
         if (lastHit && Date.now() - lastHit.time < 500) {
           ctx.save();
           ctx.fillStyle = lastHit.result === 'PERFECT' ? '#00FF00' :
-                          lastHit.result === 'GOOD' ? '#FFFF00' : '#FF0000';
+                          lastHit.result === 'GOOD' ? '#FFFF00' :
+                          lastHit.result === 'HELD!' ? '#00FF00' :
+                          lastHit.result === 'RELEASED!' ? '#FF0000' : '#FF0000';
           ctx.font = 'bold 48px sans-serif';
           ctx.textAlign = 'center';
           ctx.shadowColor = '#000000';
@@ -127,32 +158,41 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   // Initialize input handler
   useEffect(() => {
     const handleKeyPress = (lane: 'left' | 'right') => {
-      console.log(`Key pressed: ${lane}`);
-
-      if (!beatmap || !audioManager) {
-        console.log('No beatmap or audio manager');
-        return;
-      }
+      if (!beatmap || !audioManager) return;
 
       const currentTime = audioManager.getCurrentTime();
-      console.log(`Current time: ${currentTime.toFixed(2)}s`);
-
       const activeNotes = beatmap.notes.filter(n => !gameState.notes.includes(n));
-      console.log(`Active notes: ${activeNotes.length}`);
 
+      // Check for hold notes first
+      const holdNote = findHoldNoteInHitZone(activeNotes, lane, currentTime);
+      if (holdNote) {
+        const result = checkHoldStart(holdNote, currentTime);
+        if (result !== 'miss') {
+          // Start tracking this hold note
+          setGameState(prev => ({
+            ...prev,
+            notes: [...prev.notes, holdNote],
+            activeHoldNotes: [...prev.activeHoldNotes, {
+              note: holdNote,
+              startResult: result,
+              isHeld: true
+            }]
+          }));
+          setLastHit({ result: result.toUpperCase(), time: Date.now() });
+          return;
+        }
+      }
+
+      // Fall through to tap note logic
       const note = findNoteInHitZone(activeNotes, lane, currentTime);
-      console.log(`Note found in hit zone:`, note);
 
       if (note) {
         const result = checkHit(note, currentTime);
-        console.log(`Hit: ${result} (${lane} lane) at time ${currentTime.toFixed(2)}s, note time ${note.timestamp}s`);
-
-        // Show visual feedback
         setLastHit({ result: result.toUpperCase(), time: Date.now() });
 
         setGameState((prev) => {
           const newState = { ...prev };
-          newState.notes.push(note); // Mark as processed
+          newState.notes = [...prev.notes, note]; // Mark as processed
 
           if (result === 'perfect') {
             newState.perfectHits++;
@@ -168,18 +208,54 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           }
 
           newState.maxCombo = Math.max(newState.maxCombo, newState.combo);
-
-          // Calculate accuracy (REQ-4, AC5)
           newState.accuracy = calculateAccuracy(newState.hits, newState.misses);
 
           return newState;
         });
-      } else {
-        console.log(`No note in hit zone for ${lane} lane at ${currentTime.toFixed(2)}s`);
       }
     };
 
-    inputHandlerRef.current = new InputHandler(handleKeyPress);
+    const handleKeyRelease = (lane: 'left' | 'right') => {
+      if (!audioManager) return;
+
+      const currentTime = audioManager.getCurrentTime();
+
+      setGameState(prev => {
+        const holdNote = prev.activeHoldNotes.find(
+          h => h.note.lane === lane && h.isHeld
+        );
+        if (!holdNote) return prev;
+
+        const isComplete = checkHoldComplete(holdNote.note, currentTime);
+        const newState = { ...prev };
+
+        if (isComplete) {
+          // Success — count using the initial press result
+          if (holdNote.startResult === 'perfect') {
+            newState.perfectHits++;
+          } else {
+            newState.goodHits++;
+          }
+          newState.hits++;
+          newState.combo++;
+          newState.maxCombo = Math.max(newState.maxCombo, newState.combo);
+          setLastHit({ result: 'HELD!', time: Date.now() });
+        } else {
+          // Released too early — miss
+          newState.misses++;
+          newState.combo = 0;
+          setLastHit({ result: 'RELEASED!', time: Date.now() });
+        }
+
+        newState.accuracy = calculateAccuracy(newState.hits, newState.misses);
+        // Remove from active hold notes
+        newState.activeHoldNotes = prev.activeHoldNotes.filter(h => h !== holdNote);
+
+        return newState;
+      });
+    };
+
+    inputHandlerRef.current = new InputHandler(handleKeyPress, handleKeyRelease);
     inputHandlerRef.current.start();
 
     return () => {

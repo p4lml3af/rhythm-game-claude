@@ -20,20 +20,28 @@ export function drawNote(
     ? CANVAS_WIDTH / 2 - LANE_WIDTH - 50
     : CANVAS_WIDTH / 2 + 50;
 
-  // Tap note color (blue)
-  ctx.fillStyle = '#0000FF';
+  const noteX = laneX + LANE_WIDTH / 2 - 25; // Center in lane
 
-  // Draw rectangle for tap note
-  ctx.fillRect(
-    laneX + LANE_WIDTH / 2 - 25, // Center in lane
-    y,
-    50, // Note width
-    NOTE_HEIGHT
-  );
+  if (note.type === 'hold' && note.duration) {
+    // Hold note: red extended bar
+    ctx.fillStyle = '#FF0000';
+    const holdHeight = note.duration * NOTE_SCROLL_SPEED;
+    // Bar extends upward from y (start) by holdHeight pixels
+    ctx.fillRect(noteX, y - holdHeight, 50, holdHeight + NOTE_HEIGHT);
+  } else {
+    // Tap note: blue rectangle
+    ctx.fillStyle = '#0000FF';
+    ctx.fillRect(noteX, y, 50, NOTE_HEIGHT);
+  }
 }
 
-export function isNoteOnScreen(y: number): boolean {
-  return y >= -NOTE_HEIGHT && y <= CANVAS_HEIGHT;
+export function calculateHoldNoteEndY(note: Note, currentTime: number): number {
+  const endTimestamp = note.timestamp + (note.duration ?? 0);
+  return calculateNoteY(endTimestamp, currentTime);
+}
+
+export function isNoteOnScreen(y: number, holdHeight: number = 0): boolean {
+  return y >= -NOTE_HEIGHT && (y - holdHeight) <= CANVAS_HEIGHT;
 }
 
 export function isNoteInHitZone(y: number): boolean {

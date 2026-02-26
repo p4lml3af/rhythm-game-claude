@@ -5,9 +5,11 @@ export class InputHandler {
   private leftKey: string = 'KeyD';
   private rightKey: string = 'KeyK';
   private onKeyPress: KeyCallback | null = null;
+  private onKeyRelease: KeyCallback | null = null;
 
-  constructor(onKeyPress: KeyCallback) {
+  constructor(onKeyPress: KeyCallback, onKeyRelease?: KeyCallback) {
     this.onKeyPress = onKeyPress;
+    this.onKeyRelease = onKeyRelease ?? null;
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
   }
@@ -29,6 +31,13 @@ export class InputHandler {
 
   private handleKeyUp(event: KeyboardEvent): void {
     this.keysPressed.delete(event.code);
+
+    // Fire release callback for lane keys
+    if (event.code === this.leftKey && this.onKeyRelease) {
+      this.onKeyRelease('left');
+    } else if (event.code === this.rightKey && this.onKeyRelease) {
+      this.onKeyRelease('right');
+    }
   }
 
   start(): void {

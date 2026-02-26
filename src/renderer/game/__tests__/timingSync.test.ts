@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateNoteY } from '../noteRenderer';
+import { calculateNoteY, calculateHoldNoteEndY } from '../noteRenderer';
 import { checkHit } from '../hitDetection';
 import { HIT_ZONE_Y } from '../rendering';
 import type { Note } from '../../../shared/types';
@@ -99,5 +99,51 @@ describe('timing synchronization', () => {
 
     // Just past good window (time = 5.101s, +101ms): miss
     expect(checkHit(note, 5.101)).toBe('miss');
+  });
+});
+
+// Hold Note Sync Verification
+describe('hold note timing synchronization', () => {
+  it('hold note start position matches audio timestamp (same as tap)', () => {
+    const holdNote: Note = { timestamp: 5.0, lane: 'left', type: 'hold', duration: 1.0 };
+    const tapNote: Note = { timestamp: 5.0, lane: 'left', type: 'tap' };
+
+    // Both should be at HIT_ZONE_Y when currentTime = timestamp
+    const holdY = calculateNoteY(holdNote.timestamp, 5.0);
+    const tapY = calculateNoteY(tapNote.timestamp, 5.0);
+    expect(holdY).toBe(HIT_ZONE_Y);
+    expect(tapY).toBe(HIT_ZONE_Y);
+    expect(holdY).toBe(tapY);
+  });
+
+  it('hold note end position matches audio timestamp + duration', () => {
+    const note: Note = { timestamp: 5.0, lane: 'left', type: 'hold', duration: 1.0 };
+
+    // End position at currentTime = timestamp + duration should be at HIT_ZONE_Y
+    const endY = calculateHoldNoteEndY(note, 6.0);
+    expect(endY).toBe(HIT_ZONE_Y);
+
+    // End position at currentTime = timestamp (note just started) should be above
+    const endYEarly = calculateHoldNoteEndY(note, 5.0);
+    // endTimestamp=6.0, currentTime=5.0 → 1s away → 200px above hit zone
+    expect(endYEarly).toBe(HIT_ZONE_Y - 200);
+  });
+
+  it('hold note body length is consistent (duration * scroll speed)', () => {
+    const durations = [0.5, 1.0, 1.5, 2.0, 3.0];
+
+    for (const duration of durations) {
+      const note: Note = { timestamp: 10.0, lane: 'left', type: 'hold', duration };
+
+      // At any given currentTime, the distance between start Y and end Y
+      // should equal duration * NOTE_SCROLL_SPEED
+      const testTimes = [8.0, 9.0, 10.0, 11.0];
+      for (const t of testTimes) {
+        const startY = calculateNoteY(note.timestamp, t);
+        const endY = calculateHoldNoteEndY(note, t);
+        const bodyLength = startY - endY; // start is below end (further down screen)
+        expect(bodyLength).toBeCloseTo(duration * NOTE_SCROLL_SPEED, 5);
+      }
+    }
   });
 });
