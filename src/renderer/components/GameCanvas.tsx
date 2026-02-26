@@ -205,6 +205,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   return (
     <div>
       <button
+        data-testid="button-play"
         onClick={handlePlayPause}
         style={{
           position: 'absolute',
