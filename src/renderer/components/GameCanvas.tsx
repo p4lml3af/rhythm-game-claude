@@ -4,7 +4,7 @@ import { AudioManager } from '../game/audioManager';
 import { loadBeatmap } from '../game/beatmapLoader';
 import { calculateNoteY, drawNote, isNoteOnScreen } from '../game/noteRenderer';
 import { InputHandler } from '../game/inputHandler';
-import { checkHit, findNoteInHitZone } from '../game/hitDetection';
+import { checkHit, findNoteInHitZone, calculateAccuracy } from '../game/hitDetection';
 import type { Beatmap, GameState } from '../../shared/types';
 
 interface GameCanvasProps {
@@ -170,10 +170,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           newState.maxCombo = Math.max(newState.maxCombo, newState.combo);
 
           // Calculate accuracy (REQ-4, AC5)
-          const totalNotes = newState.hits + newState.misses;
-          newState.accuracy = totalNotes > 0
-            ? (newState.hits / totalNotes) * 100
-            : 100;
+          newState.accuracy = calculateAccuracy(newState.hits, newState.misses);
 
           return newState;
         });

@@ -18,6 +18,12 @@ export function checkHit(
   }
 }
 
+export function calculateAccuracy(hits: number, misses: number): number {
+  const totalNotes = hits + misses;
+  if (totalNotes === 0) return 100;
+  return (hits / totalNotes) * 100;
+}
+
 export function findNoteInHitZone(
   notes: Note[],
   lane: 'left' | 'right',
