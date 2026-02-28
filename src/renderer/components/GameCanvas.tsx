@@ -6,6 +6,7 @@ import { calculateNoteY, drawNote, isNoteOnScreen } from '../game/noteRenderer';
 import { InputHandler } from '../game/inputHandler';
 import { checkHit, findNoteInHitZone, calculateAccuracy, checkHoldStart, checkHoldComplete, findHoldNoteInHitZone, countUnprocessedNotes } from '../game/hitDetection';
 import type { Beatmap, GameState, GameResults } from '../../shared/types';
+import { useSettingsStore } from '../stores/settingsStore';
 
 interface GameCanvasProps {
   width?: number;
@@ -23,6 +24,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [beatmap, setBeatmap] = useState<Beatmap | null>(null);
   const [audioManager] = useState(() => new AudioManager());
+  const { settings } = useSettingsStore();
   const inputHandlerRef = useRef<InputHandler | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameState, setGameState] = useState<GameState>({
@@ -38,6 +40,11 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     activeHoldNotes: []
   });
   const [lastHit, setLastHit] = useState<{ result: string; time: number } | null>(null);
+
+  // Apply volume setting
+  useEffect(() => {
+    audioManager.setVolume(settings.volume);
+  }, [settings.volume, audioManager]);
 
   // Load beatmap and audio on mount
   useEffect(() => {
@@ -91,7 +98,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               ? note.duration * 200 : 0; // 200 = NOTE_SCROLL_SPEED
 
             if (isNoteOnScreen(y, holdHeight)) {
-              drawNote(ctx, note, y);
+              drawNote(ctx, note, y, settings.colors);
             }
           });
 
@@ -146,7 +153,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
         }
 
         // Draw accuracy percentage
-        drawAccuracy(ctx, gameState.accuracy);
+        drawAccuracy(ctx, gameState.accuracy, settings.colors.text);
       }
 
       animationFrameId = requestAnimationFrame(gameLoop);
@@ -157,7 +164,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [beatmap, audioManager, gameState.accuracy, gameState.combo, lastHit]);
+  }, [beatmap, audioManager, gameState.accuracy, gameState.combo, lastHit, settings.colors]);
 
   // Initialize input handler
   useEffect(() => {
@@ -259,13 +266,13 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       });
     };
 
-    inputHandlerRef.current = new InputHandler(handleKeyPress, handleKeyRelease);
+    inputHandlerRef.current = new InputHandler(handleKeyPress, handleKeyRelease, settings.keyBindings);
     inputHandlerRef.current.start();
 
     return () => {
       inputHandlerRef.current?.stop();
     };
-  }, [beatmap, audioManager, gameState.notes]);
+  }, [beatmap, audioManager, gameState.notes, settings.keyBindings]);
 
   const handleSongEnd = () => {
     if (!beatmap) return;
@@ -332,7 +339,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
         height={height}
         style={{
           display: 'block',
-          backgroundColor: '#000000',
+          backgroundColor: settings.colors.background,
           margin: '0 auto'
         }}
       />

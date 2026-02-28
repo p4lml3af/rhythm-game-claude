@@ -69,6 +69,27 @@ ipcMain.handle('scores:save', async (_event, scores) => {
   fs.renameSync(tmpPath, filePath)
 })
 
+// Settings persistence IPC handlers
+function getSettingsPath() {
+  return join(app.getPath('userData'), 'settings.json')
+}
+
+ipcMain.handle('settings:load', async () => {
+  try {
+    const data = fs.readFileSync(getSettingsPath(), 'utf-8')
+    return JSON.parse(data)
+  } catch {
+    return null
+  }
+})
+
+ipcMain.handle('settings:save', async (_event, settings) => {
+  const filePath = getSettingsPath()
+  const tmpPath = filePath + '.tmp'
+  fs.writeFileSync(tmpPath, JSON.stringify(settings, null, 2), 'utf-8')
+  fs.renameSync(tmpPath, filePath)
+})
+
 // App lifecycle
 app.whenReady().then(() => {
   createWindow()

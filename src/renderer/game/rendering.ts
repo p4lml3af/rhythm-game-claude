@@ -31,9 +31,10 @@ export function drawHitZones(ctx: CanvasRenderingContext2D): void {
 
 export function drawAccuracy(
   ctx: CanvasRenderingContext2D,
-  accuracy: number
+  accuracy: number,
+  textColor?: string
 ): void {
-  ctx.fillStyle = '#CCCCCC';
+  ctx.fillStyle = textColor ?? '#CCCCCC';
   ctx.font = '24px sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(

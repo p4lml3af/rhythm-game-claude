@@ -7,9 +7,12 @@ export class AudioManager {
   private isPlaying: boolean = false;
   private stoppedManually: boolean = false;
   private onEndedCallback: (() => void) | null = null;
+  private gainNode: GainNode | null = null;
 
   async loadAudio(audioPath: string): Promise<void> {
     this.audioContext = new AudioContext();
+    this.gainNode = this.audioContext.createGain();
+    this.gainNode.connect(this.audioContext.destination);
 
     const response = await fetch(audioPath);
     const arrayBuffer = await response.arrayBuffer();
@@ -27,7 +30,7 @@ export class AudioManager {
 
     this.sourceNode = this.audioContext.createBufferSource();
     this.sourceNode.buffer = this.audioBuffer;
-    this.sourceNode.connect(this.audioContext.destination);
+    this.sourceNode.connect(this.gainNode ?? this.audioContext.destination);
 
     this.sourceNode.onended = () => {
       this.isPlaying = false;
@@ -64,6 +67,12 @@ export class AudioManager {
       this.sourceNode.stop();
       this.sourceNode = null;
       this.isPlaying = false;
+    }
+  }
+
+  setVolume(volume: number): void {
+    if (this.gainNode) {
+      this.gainNode.gain.value = volume / 100;
     }
   }
 

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { GameCanvas } from './components/GameCanvas';
 import { ResultsScreen } from './components/ResultsScreen';
 import { useScoreStore } from './stores/scoreStore';
+import { useSettingsStore } from './stores/settingsStore';
+import { SettingsScreen } from './components/SettingsScreen';
 import type { GameResults } from '../shared/types';
 
 type Screen = 'playing' | 'results';
@@ -12,14 +14,21 @@ function App() {
   const [screen, setScreen] = useState<Screen>('playing');
   const [results, setResults] = useState<GameResults | null>(null);
   const [gameKey, setGameKey] = useState(0);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const { setBestScore, getBestScore, loadScores } = useScoreStore();
+  const { loadSettings } = useSettingsStore();
 
   useEffect(() => {
     if (window.electronAPI?.loadScores) {
       window.electronAPI.loadScores().then(loadScores);
     }
-  }, [loadScores]);
+    if (window.electronAPI?.loadSettings) {
+      window.electronAPI.loadSettings().then(savedSettings => {
+        if (savedSettings) loadSettings(savedSettings);
+      });
+    }
+  }, [loadScores, loadSettings]);
 
   const [previousBest, setPreviousBest] = useState<number | null>(null);
 
@@ -69,12 +78,34 @@ function App() {
       height: '100vh',
       backgroundColor: '#000000'
     }}>
+      <button
+        data-testid="button-settings"
+        onClick={() => setIsSettingsOpen(true)}
+        style={{
+          position: 'absolute',
+          top: 20,
+          right: 20,
+          padding: '8px 16px',
+          fontSize: '14px',
+          backgroundColor: '#333',
+          color: '#CCC',
+          border: '1px solid #555',
+          cursor: 'pointer',
+          zIndex: 1000,
+        }}
+      >
+        Settings
+      </button>
       <GameCanvas
         key={gameKey}
         width={800}
         height={600}
         levelId={LEVEL_ID}
         onComplete={handleComplete}
+      />
+      <SettingsScreen
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </div>
   );

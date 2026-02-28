@@ -44,3 +44,17 @@ export interface ActiveHoldNote {
   startResult: HitResult;        // How accurately the initial press was (perfect/good)
   isHeld: boolean;               // Is the key currently held down?
 }
+
+export interface Settings {
+  colors: {
+    tap: string;        // Hex color, default '#0000FF'
+    hold: string;       // Hex color, default '#FF0000'
+    background: string; // Hex color, default '#000000'
+    text: string;       // Hex color, default '#CCCCCC'
+  };
+  keyBindings: {
+    left: string;       // Key code string, default 'KeyD'
+    right: string;      // Key code string, default 'KeyK'
+  };
+  volume: number;       // 0-100, default 100
+}

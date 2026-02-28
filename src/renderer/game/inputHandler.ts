@@ -7,9 +7,11 @@ export class InputHandler {
   private onKeyPress: KeyCallback | null = null;
   private onKeyRelease: KeyCallback | null = null;
 
-  constructor(onKeyPress: KeyCallback, onKeyRelease?: KeyCallback) {
+  constructor(onKeyPress: KeyCallback, onKeyRelease?: KeyCallback, keyBindings?: { left: string; right: string }) {
     this.onKeyPress = onKeyPress;
     this.onKeyRelease = onKeyRelease ?? null;
+    this.leftKey = keyBindings?.left ?? 'KeyD';
+    this.rightKey = keyBindings?.right ?? 'KeyK';
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
   }

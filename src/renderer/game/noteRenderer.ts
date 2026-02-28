@@ -14,7 +14,8 @@ export function calculateNoteY(noteTimestamp: number, currentTime: number): numb
 export function drawNote(
   ctx: CanvasRenderingContext2D,
   note: Note,
-  y: number
+  y: number,
+  colors?: { tap: string; hold: string }
 ): void {
   const laneX = note.lane === 'left'
     ? CANVAS_WIDTH / 2 - LANE_WIDTH - 50
@@ -23,14 +24,11 @@ export function drawNote(
   const noteX = laneX + LANE_WIDTH / 2 - 25; // Center in lane
 
   if (note.type === 'hold' && note.duration) {
-    // Hold note: red extended bar
-    ctx.fillStyle = '#FF0000';
+    ctx.fillStyle = colors?.hold ?? '#FF0000';
     const holdHeight = note.duration * NOTE_SCROLL_SPEED;
-    // Bar extends upward from y (start) by holdHeight pixels
     ctx.fillRect(noteX, y - holdHeight, 50, holdHeight + NOTE_HEIGHT);
   } else {
-    // Tap note: blue rectangle
-    ctx.fillStyle = '#0000FF';
+    ctx.fillStyle = colors?.tap ?? '#0000FF';
     ctx.fillRect(noteX, y, 50, NOTE_HEIGHT);
   }
 }

@@ -129,3 +129,42 @@ describe('InputHandler — onKeyRelease', () => {
     expect(releaseCallback).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('InputHandler — custom key bindings', () => {
+  function fireKeyDown(code: string) {
+    window.dispatchEvent(new KeyboardEvent('keydown', { code }));
+  }
+
+  it('uses custom key bindings when provided', () => {
+    const callback = vi.fn();
+    const handler = new InputHandler(callback, undefined, { left: 'ArrowLeft', right: 'ArrowRight' });
+    handler.start();
+
+    fireKeyDown('ArrowLeft');
+    expect(callback).toHaveBeenCalledWith('left');
+
+    fireKeyDown('ArrowRight');
+    expect(callback).toHaveBeenCalledWith('right');
+
+    // Default keys should NOT work
+    fireKeyDown('KeyD');
+    fireKeyDown('KeyK');
+    expect(callback).toHaveBeenCalledTimes(2);
+
+    handler.stop();
+  });
+
+  it('falls back to KeyD/KeyK when no key bindings provided', () => {
+    const callback = vi.fn();
+    const handler = new InputHandler(callback);
+    handler.start();
+
+    fireKeyDown('KeyD');
+    expect(callback).toHaveBeenCalledWith('left');
+
+    fireKeyDown('KeyK');
+    expect(callback).toHaveBeenCalledWith('right');
+
+    handler.stop();
+  });
+});
