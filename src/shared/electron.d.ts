@@ -3,6 +3,7 @@ interface ElectronAPI {
   saveScores: (scores: Record<string, number>) => Promise<void>;
   loadSettings: () => Promise<import('./types').Settings | null>;
   saveSettings: (settings: import('./types').Settings) => Promise<void>;
+  listLevels: () => Promise<import('./types').LevelInfo[]>;
 }
 
 interface Window {

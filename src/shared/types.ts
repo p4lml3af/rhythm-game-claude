@@ -45,6 +45,14 @@ export interface ActiveHoldNote {
   isHeld: boolean;               // Is the key currently held down?
 }
 
+export interface LevelInfo {
+  id: string;          // Folder name (e.g., 'test-level-01')
+  songTitle: string;   // From beatmap.json
+  bpm: number;         // From beatmap.json
+  duration: number;    // From beatmap.json
+  noteCount: number;   // beatmap.notes.length
+}
+
 export interface Settings {
   colors: {
     tap: string;        // Hex color, default '#0000FF'

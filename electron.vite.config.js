@@ -6,7 +6,7 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin(), bytecodePlugin()],
     build: {
-      outDir: 'dist-electron',
+      outDir: 'dist-electron/main',
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/main/index.js')
@@ -17,7 +17,7 @@ export default defineConfig({
   preload: {
     plugins: [externalizeDepsPlugin()],
     build: {
-      outDir: 'dist-electron',
+      outDir: 'dist-electron/preload',
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/preload/index.js')

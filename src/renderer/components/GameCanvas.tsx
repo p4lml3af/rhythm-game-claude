@@ -50,8 +50,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   useEffect(() => {
     const loadAssets = async () => {
       try {
-        const loadedBeatmap = await loadBeatmap('/songs/test-level-01/beatmap.json');
-        await audioManager.loadAudio('/songs/test-level-01/audio.mp3');
+        const loadedBeatmap = await loadBeatmap(`/songs/${levelId}/beatmap.json`);
+        await audioManager.loadAudio(`/songs/${levelId}/audio.mp3`);
         setBeatmap(loadedBeatmap);
         console.log('Beatmap and audio loaded:', loadedBeatmap);
       } catch (error) {
@@ -60,7 +60,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     };
 
     loadAssets();
-  }, [audioManager]);
+  }, [audioManager, levelId]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

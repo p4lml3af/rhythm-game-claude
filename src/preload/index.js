@@ -5,4 +5,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveScores: (scores) => ipcRenderer.invoke('scores:save', scores),
   loadSettings: () => ipcRenderer.invoke('settings:load'),
   saveSettings: (settings) => ipcRenderer.invoke('settings:save', settings),
+  listLevels: () => ipcRenderer.invoke('levels:list'),
 });

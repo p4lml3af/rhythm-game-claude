@@ -6,6 +6,7 @@ interface ResultsScreenProps {
   perfectHits: number;
   totalNotes: number;
   levelId: string;
+  levelTitle?: string;
   previousBest: number | null;
   isNewBest: boolean;
   onReplay: () => void;
@@ -19,6 +20,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   totalNotes,
   previousBest,
   isNewBest,
+  levelTitle,
   onReplay,
   onBack,
 }) => {
@@ -36,9 +38,14 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         fontFamily: 'sans-serif',
       }}
     >
-      <h1 style={{ fontSize: '48px', marginBottom: '40px', color: '#FFFFFF' }}>
+      <h1 style={{ fontSize: '48px', marginBottom: '12px', color: '#FFFFFF' }}>
         Level Complete
       </h1>
+      {levelTitle && (
+        <div style={{ fontSize: '20px', color: '#888888', marginBottom: '32px' }}>
+          {levelTitle}
+        </div>
+      )}
 
       <div style={{ fontSize: '64px', fontWeight: 'bold', color: '#FFFFFF', marginBottom: '8px' }}>
         {accuracy.toFixed(1)}%
@@ -96,7 +103,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
             cursor: 'pointer',
           }}
         >
-          Back
+          Back to Levels
         </button>
       </div>
     </div>

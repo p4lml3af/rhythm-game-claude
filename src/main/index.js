@@ -90,6 +90,48 @@ ipcMain.handle('settings:save', async (_event, settings) => {
   fs.renameSync(tmpPath, filePath)
 })
 
+// Level discovery IPC handler
+ipcMain.handle('levels:list', async () => {
+  try {
+    // In dev, songs are in public/songs/ served by Vite. Scan from project root.
+    const songsDir = process.env.NODE_ENV === 'development'
+      ? join(process.cwd(), 'public', 'songs')
+      : join(__dirname, '../renderer/songs')
+
+    if (!fs.existsSync(songsDir)) return []
+
+    const entries = fs.readdirSync(songsDir, { withFileTypes: true })
+    const levels = []
+
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue
+
+      const beatmapPath = join(songsDir, entry.name, 'beatmap.json')
+      const audioPath = join(songsDir, entry.name, 'audio.mp3')
+
+      if (!fs.existsSync(beatmapPath) || !fs.existsSync(audioPath)) continue
+
+      try {
+        const data = JSON.parse(fs.readFileSync(beatmapPath, 'utf-8'))
+        levels.push({
+          id: entry.name,
+          songTitle: data.songTitle || entry.name,
+          bpm: data.bpm || 0,
+          duration: data.duration || 0,
+          noteCount: Array.isArray(data.notes) ? data.notes.length : 0,
+        })
+      } catch {
+        console.warn(`Skipping invalid beatmap: ${beatmapPath}`)
+      }
+    }
+
+    return levels.sort((a, b) => a.id.localeCompare(b.id))
+  } catch (err) {
+    console.error('Failed to list levels:', err)
+    return []
+  }
+})
+
 // App lifecycle
 app.whenReady().then(() => {
   createWindow()
