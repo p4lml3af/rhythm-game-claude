@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { checkHit, findNoteInHitZone, calculateAccuracy } from '../hitDetection';
+import { checkHit, findNoteInHitZone, calculateAccuracy, countUnprocessedNotes } from '../hitDetection';
 import type { Note } from '../../../shared/types';
 
 const makeNote = (timestamp: number, lane: 'left' | 'right' = 'left'): Note => ({
@@ -159,5 +159,38 @@ describe('simultaneous notes', () => {
 
     expect(findNoteInHitZone(offsetNotes, 'left', 5.0)).toBe(leftAt5);
     expect(findNoteInHitZone(offsetNotes, 'right', 5.08)).toBe(rightAt508);
+  });
+});
+
+// Suite 10: countUnprocessedNotes — End-of-Song Miss Counting
+describe('countUnprocessedNotes', () => {
+  it('returns 0 when all notes processed', () => {
+    const notes = [makeNote(1), makeNote(2), makeNote(3)];
+    expect(countUnprocessedNotes(notes, notes)).toBe(0);
+  });
+
+  it('returns correct count when some notes unprocessed', () => {
+    const notes = [makeNote(1), makeNote(2), makeNote(3)];
+    const processed = [notes[0], notes[2]];
+    expect(countUnprocessedNotes(notes, processed)).toBe(1);
+  });
+
+  it('returns total count when no notes processed', () => {
+    const notes = [makeNote(1), makeNote(2), makeNote(3)];
+    expect(countUnprocessedNotes(notes, [])).toBe(3);
+  });
+
+  it('returns 0 for empty notes array', () => {
+    expect(countUnprocessedNotes([], [])).toBe(0);
+  });
+
+  it('excludes active hold notes from unprocessed count', () => {
+    const tap1 = makeNote(1);
+    const hold1: Note = { timestamp: 2, lane: 'left', type: 'hold', duration: 1 };
+    const tap2 = makeNote(3);
+    const allNotes = [tap1, hold1, tap2];
+    const processed = [tap1];
+    const activeHolds = [hold1];
+    expect(countUnprocessedNotes(allNotes, processed, activeHolds)).toBe(1); // only tap2
   });
 });

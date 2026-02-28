@@ -1,5 +1,6 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const { join } = require('path')
+const fs = require('fs')
 
 let mainWindow
 
@@ -10,7 +11,8 @@ function createWindow() {
     show: false, // Don't show until ready
     webPreferences: {
       nodeIntegration: false,
-      contextIsolation: true
+      contextIsolation: true,
+      preload: join(__dirname, '../preload/index.js')
     }
   })
 
@@ -45,6 +47,27 @@ function createWindow() {
     mainWindow = null
   })
 }
+
+// Score persistence IPC handlers
+function getScoresPath() {
+  return join(app.getPath('userData'), 'scores.json')
+}
+
+ipcMain.handle('scores:load', async () => {
+  try {
+    const data = fs.readFileSync(getScoresPath(), 'utf-8')
+    return JSON.parse(data)
+  } catch {
+    return {}
+  }
+})
+
+ipcMain.handle('scores:save', async (_event, scores) => {
+  const filePath = getScoresPath()
+  const tmpPath = filePath + '.tmp'
+  fs.writeFileSync(tmpPath, JSON.stringify(scores, null, 2), 'utf-8')
+  fs.renameSync(tmpPath, filePath)
+})
 
 // App lifecycle
 app.whenReady().then(() => {

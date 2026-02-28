@@ -1,3 +1,6 @@
-// Preload script (runs before renderer process)
-// Currently empty - can be extended later for IPC
-console.log('Preload script loaded');
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  loadScores: () => ipcRenderer.invoke('scores:load'),
+  saveScores: (scores) => ipcRenderer.invoke('scores:save', scores),
+});

@@ -4,17 +4,21 @@ import { AudioManager } from '../game/audioManager';
 import { loadBeatmap } from '../game/beatmapLoader';
 import { calculateNoteY, drawNote, isNoteOnScreen } from '../game/noteRenderer';
 import { InputHandler } from '../game/inputHandler';
-import { checkHit, findNoteInHitZone, calculateAccuracy, checkHoldStart, checkHoldComplete, findHoldNoteInHitZone } from '../game/hitDetection';
-import type { Beatmap, GameState } from '../../shared/types';
+import { checkHit, findNoteInHitZone, calculateAccuracy, checkHoldStart, checkHoldComplete, findHoldNoteInHitZone, countUnprocessedNotes } from '../game/hitDetection';
+import type { Beatmap, GameState, GameResults } from '../../shared/types';
 
 interface GameCanvasProps {
   width?: number;
   height?: number;
+  levelId?: string;
+  onComplete?: (results: GameResults) => void;
 }
 
 export const GameCanvas: React.FC<GameCanvasProps> = ({
   width = 800,
-  height = 600
+  height = 600,
+  levelId = 'test-level-01',
+  onComplete,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [beatmap, setBeatmap] = useState<Beatmap | null>(null);
@@ -263,6 +267,37 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     };
   }, [beatmap, audioManager, gameState.notes]);
 
+  const handleSongEnd = () => {
+    if (!beatmap) return;
+
+    setIsPlaying(false);
+
+    setGameState(prev => {
+      const activeHoldNoteRefs = prev.activeHoldNotes.map(h => h.note);
+      const unprocessed = countUnprocessedNotes(beatmap.notes, prev.notes, activeHoldNoteRefs);
+      const finalMisses = prev.misses + unprocessed + prev.activeHoldNotes.length;
+      const totalNotes = beatmap.notes.length;
+      const finalAccuracy = totalNotes === 0 ? 100 : ((prev.perfectHits + prev.goodHits) / totalNotes) * 100;
+
+      const results: GameResults = {
+        accuracy: Math.round(finalAccuracy * 10) / 10,
+        maxCombo: prev.maxCombo,
+        perfectHits: prev.perfectHits,
+        goodHits: prev.goodHits,
+        totalNotes,
+        hits: prev.hits,
+        misses: finalMisses,
+      };
+
+      if (onComplete) {
+        // Defer to avoid setState-in-setState
+        setTimeout(() => onComplete(results), 0);
+      }
+
+      return { ...prev, misses: finalMisses, accuracy: finalAccuracy, activeHoldNotes: [] };
+    });
+  };
+
   const handlePlayPause = () => {
     if (!audioManager || !beatmap) return;
 
@@ -270,7 +305,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       audioManager.stop();
       setIsPlaying(false);
     } else {
-      audioManager.play();
+      audioManager.play(handleSongEnd);
       setIsPlaying(true);
     }
   };

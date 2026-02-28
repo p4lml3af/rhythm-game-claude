@@ -52,6 +52,18 @@ export function findHoldNoteInHitZone(
   }) || null;
 }
 
+export function countUnprocessedNotes(
+  allNotes: Note[],
+  processedNotes: Note[],
+  activeHoldNotes?: Note[]
+): number {
+  const processedSet = new Set(processedNotes);
+  const activeSet = new Set(activeHoldNotes ?? []);
+  return allNotes.filter(
+    (note) => !processedSet.has(note) && !activeSet.has(note)
+  ).length;
+}
+
 export function findNoteInHitZone(
   notes: Note[],
   lane: 'left' | 'right',

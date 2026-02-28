@@ -27,6 +27,16 @@ export interface GameState {
   activeHoldNotes: ActiveHoldNote[];  // Hold notes currently being tracked
 }
 
+export interface GameResults {
+  accuracy: number;
+  maxCombo: number;
+  perfectHits: number;
+  goodHits: number;
+  totalNotes: number;
+  hits: number;
+  misses: number;
+}
+
 export type HitResult = 'perfect' | 'good' | 'miss';
 
 export interface ActiveHoldNote {
