@@ -1,0 +1,123 @@
+{
+  "songTitle": "First Steps",
+  "audioFile": "audio.mp3",
+  "bpm": 70,
+  "duration": 30,
+  "notes": [
+    {
+      "timestamp": 3,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.714,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 8.143,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 11.571,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 13,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 13.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 14.714,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.571,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.286,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 18.143,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.714,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.571,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 24.714,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 25.571,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 26.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 27.286,
+      "lane": "left",
+      "type": "tap"
+    }
+  ]
+}

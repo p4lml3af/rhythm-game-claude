@@ -1,0 +1,188 @@
+{
+  "songTitle": "Together",
+  "audioFile": "audio.mp3",
+  "bpm": 90,
+  "duration": 30,
+  "notes": [
+    {
+      "timestamp": 3,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 3.667,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.333,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.667,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.333,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7.667,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 8.333,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9.667,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 11,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 11.667,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 12.333,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 13,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 13.667,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 14.333,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.667,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.333,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.667,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.333,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.333,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.667,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.667,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23.667,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 24.333,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 25,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 25.667,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 26.333,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 27,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 27.667,
+      "lane": "right",
+      "type": "tap"
+    }
+  ]
+}

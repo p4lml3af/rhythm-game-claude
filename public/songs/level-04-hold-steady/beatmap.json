@@ -1,0 +1,152 @@
+{
+  "songTitle": "Hold Steady",
+  "audioFile": "audio.mp3",
+  "bpm": 100,
+  "duration": 30,
+  "notes": [
+    {
+      "timestamp": 3,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 3.6,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.2,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.8,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.4,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.6,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7.2,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7.8,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 8.4,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 10,
+      "lane": "left",
+      "type": "hold",
+      "duration": 2
+    },
+    {
+      "timestamp": 12.4,
+      "lane": "left",
+      "type": "hold",
+      "duration": 2
+    },
+    {
+      "timestamp": 15,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.6,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.2,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.8,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.4,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 18,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 18.6,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19.2,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19.8,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21,
+      "lane": "right",
+      "type": "hold",
+      "duration": 2
+    },
+    {
+      "timestamp": 23.4,
+      "lane": "right",
+      "type": "hold",
+      "duration": 2
+    },
+    {
+      "timestamp": 26,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 26.6,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 27.2,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 27.8,
+      "lane": "right",
+      "type": "tap"
+    }
+  ]
+}

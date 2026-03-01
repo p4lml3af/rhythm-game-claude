@@ -1,0 +1,170 @@
+{
+  "songTitle": "Quick Grip",
+  "audioFile": "audio.mp3",
+  "bpm": 110,
+  "duration": 30,
+  "notes": [
+    {
+      "timestamp": 3,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 3.545,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.091,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.636,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.182,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.727,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.273,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.818,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7.364,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7.909,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 10.091,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 11.182,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 12.273,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 14,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 15.091,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 16.182,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 17.273,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 19,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19.545,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.091,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.636,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.182,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.727,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 22.273,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 22.818,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 24,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.5
+    },
+    {
+      "timestamp": 25.091,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.5
+    },
+    {
+      "timestamp": 26.182,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.5
+    },
+    {
+      "timestamp": 27.273,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.5
+    }
+  ]
+}

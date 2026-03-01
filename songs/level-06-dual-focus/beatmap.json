@@ -1,0 +1,208 @@
+{
+  "songTitle": "Dual Focus",
+  "audioFile": "audio.mp3",
+  "bpm": 120,
+  "duration": 30,
+  "notes": [
+    {
+      "timestamp": 3,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 3.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9,
+      "lane": "left",
+      "type": "hold",
+      "duration": 1.5
+    },
+    {
+      "timestamp": 9.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 10,
+      "lane": "right",
+      "type": "hold",
+      "duration": 1.5
+    },
+    {
+      "timestamp": 11,
+      "lane": "left",
+      "type": "hold",
+      "duration": 1.5
+    },
+    {
+      "timestamp": 12,
+      "lane": "right",
+      "type": "hold",
+      "duration": 1.5
+    },
+    {
+      "timestamp": 13,
+      "lane": "left",
+      "type": "hold",
+      "duration": 1.5
+    },
+    {
+      "timestamp": 15,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 18,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 18.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20,
+      "lane": "left",
+      "type": "hold",
+      "duration": 1
+    },
+    {
+      "timestamp": 20.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21,
+      "lane": "right",
+      "type": "hold",
+      "duration": 1
+    },
+    {
+      "timestamp": 21.5,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 22,
+      "lane": "left",
+      "type": "hold",
+      "duration": 1
+    },
+    {
+      "timestamp": 22.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23,
+      "lane": "right",
+      "type": "hold",
+      "duration": 1
+    },
+    {
+      "timestamp": 23.5,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 24,
+      "lane": "left",
+      "type": "hold",
+      "duration": 1
+    },
+    {
+      "timestamp": 24.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 26,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 26,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 27,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 27,
+      "lane": "right",
+      "type": "tap"
+    }
+  ]
+}

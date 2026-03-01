@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.{ts,tsx}'],
     coverage: {
       provider: 'v8',
       include: ['src/renderer/game/**', 'src/shared/**'],

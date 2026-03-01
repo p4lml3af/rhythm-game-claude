@@ -1,0 +1,133 @@
+{
+  "songTitle": "Two Lanes",
+  "audioFile": "audio.mp3",
+  "bpm": 80,
+  "duration": 30,
+  "notes": [
+    {
+      "timestamp": 3,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 7.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 10.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 13,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 13.75,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 14.5,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.25,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.75,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.5,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 18.25,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 19.75,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.5,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.25,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23.75,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 24.5,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 25.25,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 26,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 26.75,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 27.5,
+      "lane": "left",
+      "type": "tap"
+    }
+  ]
+}

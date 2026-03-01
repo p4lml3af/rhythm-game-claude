@@ -9,7 +9,9 @@
     "preview": "electron-vite preview",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "generate-levels": "npx tsx scripts/generate-all-levels.ts",
+    "validate-levels": "npx tsx scripts/validate-all-levels.ts"
   },
   "keywords": [],
   "author": "",

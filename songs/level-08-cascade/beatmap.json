@@ -1,0 +1,378 @@
+{
+  "songTitle": "Cascade",
+  "audioFile": "audio.mp3",
+  "bpm": 140,
+  "duration": 30,
+  "notes": [
+    {
+      "timestamp": 3,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 3.214,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 3.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 3.643,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 3.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.071,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.286,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.714,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 4.929,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.143,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.357,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.571,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 5.786,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.214,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.643,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 6.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 9.214,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 9.429,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 10.5,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 10.714,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 10.929,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 11.143,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 12.214,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 12.429,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 12.643,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 12.857,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.8
+    },
+    {
+      "timestamp": 14,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 14.214,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 14.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 14.643,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 14.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.071,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.286,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.714,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 15.929,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.143,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.357,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.571,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 16.786,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.214,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.643,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 17.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.214,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.643,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 20.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.071,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.286,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.5,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.714,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 21.929,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 22.143,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 22.357,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 22.571,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 22.786,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23.214,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23.429,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23.643,
+      "lane": "right",
+      "type": "tap"
+    },
+    {
+      "timestamp": 23.857,
+      "lane": "left",
+      "type": "tap"
+    },
+    {
+      "timestamp": 25,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.5
+    },
+    {
+      "timestamp": 25,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.5
+    },
+    {
+      "timestamp": 26.714,
+      "lane": "left",
+      "type": "hold",
+      "duration": 0.5
+    },
+    {
+      "timestamp": 26.714,
+      "lane": "right",
+      "type": "hold",
+      "duration": 0.5
+    }
+  ]
+}
