@@ -8,6 +8,7 @@ export class AudioManager {
   private stoppedManually: boolean = false;
   private onEndedCallback: (() => void) | null = null;
   private gainNode: GainNode | null = null;
+  private playbackRate: number = 1.0;
 
   async loadAudio(audioPath: string): Promise<void> {
     this.audioContext = new AudioContext();
@@ -39,6 +40,7 @@ export class AudioManager {
       }
     };
 
+    this.sourceNode.playbackRate.value = this.playbackRate;
     this.sourceNode.start(0);
     this.startTime = this.audioContext.currentTime;
     this.isPlaying = true;
@@ -52,7 +54,7 @@ export class AudioManager {
       return this.pausedTime;
     }
 
-    return this.audioContext.currentTime - this.startTime;
+    return (this.audioContext.currentTime - this.startTime) * this.playbackRate;
   }
 
   getDuration(): number {
@@ -74,6 +76,17 @@ export class AudioManager {
     if (this.gainNode) {
       this.gainNode.gain.value = volume / 100;
     }
+  }
+
+  setPlaybackRate(rate: number): void {
+    this.playbackRate = Math.max(0.5, Math.min(1.0, rate));
+    if (this.sourceNode) {
+      this.sourceNode.playbackRate.value = this.playbackRate;
+    }
+  }
+
+  getPlaybackRate(): number {
+    return this.playbackRate;
   }
 
   getIsPlaying(): boolean {

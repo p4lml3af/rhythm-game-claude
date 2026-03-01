@@ -9,6 +9,7 @@ interface ResultsScreenProps {
   levelTitle?: string;
   previousBest: number | null;
   isNewBest: boolean;
+  isPracticeMode?: boolean;
   onReplay: () => void;
   onBack: () => void;
 }
@@ -20,6 +21,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   totalNotes,
   previousBest,
   isNewBest,
+  isPracticeMode = false,
   levelTitle,
   onReplay,
   onBack,
@@ -41,6 +43,11 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
       <h1 style={{ fontSize: '48px', marginBottom: '12px', color: '#FFFFFF' }}>
         Level Complete
       </h1>
+      {isPracticeMode && (
+        <div data-testid="label-practice-mode" style={{ fontSize: '24px', color: '#FF4444', marginBottom: '8px' }}>
+          PRACTICE MODE
+        </div>
+      )}
       {levelTitle && (
         <div style={{ fontSize: '20px', color: '#888888', marginBottom: '32px' }}>
           {levelTitle}
@@ -51,14 +58,16 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         {accuracy.toFixed(1)}%
       </div>
 
-      {isNewBest ? (
-        <div data-testid="label-new-best" style={{ fontSize: '24px', color: '#00FF00', marginBottom: '32px' }}>
-          New best!
-        </div>
-      ) : (
-        <div data-testid="label-previous-best" style={{ fontSize: '24px', color: '#888888', marginBottom: '32px' }}>
-          Previous best: {previousBest?.toFixed(1)}%
-        </div>
+      {!isPracticeMode && (
+        isNewBest ? (
+          <div data-testid="label-new-best" style={{ fontSize: '24px', color: '#00FF00', marginBottom: '32px' }}>
+            New best!
+          </div>
+        ) : (
+          <div data-testid="label-previous-best" style={{ fontSize: '24px', color: '#888888', marginBottom: '32px' }}>
+            Previous best: {previousBest?.toFixed(1)}%
+          </div>
+        )
       )}
 
       <div style={{ display: 'flex', gap: '60px', marginBottom: '48px' }}>

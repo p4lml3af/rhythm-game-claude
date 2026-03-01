@@ -4,7 +4,7 @@ import type { LevelInfo } from '../../shared/types';
 
 interface LevelSelectProps {
   levels: LevelInfo[];
-  onSelectLevel: (levelId: string) => void;
+  onSelectLevel: (levelId: string, practiceMode: boolean, speed: number) => void;
   onBack: () => void;
   onSettings: () => void;
 }
@@ -22,6 +22,8 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
   onSettings,
 }) => {
   const [focusIndex, setFocusIndex] = useState(0);
+  const [practiceMode, setPracticeMode] = useState(false);
+  const [practiceSpeed, setPracticeSpeed] = useState(0.75);
   const containerRef = useRef<HTMLDivElement>(null);
   const { getBestScore } = useScoreStore();
 
@@ -38,7 +40,7 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
       setFocusIndex(prev => (prev >= levels.length - 1 ? 0 : prev + 1));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (levels[focusIndex]) onSelectLevel(levels[focusIndex].id);
+      if (levels[focusIndex]) onSelectLevel(levels[focusIndex].id, practiceMode, practiceMode ? practiceSpeed : 1.0);
     } else if (e.key === 'Escape') {
       e.preventDefault();
       onBack();
@@ -100,6 +102,48 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
         </button>
       </div>
 
+      {/* Practice mode controls */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+        padding: '12px 24px',
+        borderBottom: '1px solid #333333',
+      }}>
+        <button
+          data-testid="button-practice-toggle"
+          onClick={() => setPracticeMode(prev => !prev)}
+          style={{
+            padding: '8px 16px',
+            fontSize: '14px',
+            backgroundColor: practiceMode ? '#442222' : '#333333',
+            color: '#CCCCCC',
+            border: `1px solid ${practiceMode ? '#664444' : '#555555'}`,
+            cursor: 'pointer',
+          }}
+        >
+          Practice Mode: {practiceMode ? 'ON' : 'OFF'}
+        </button>
+        {practiceMode && (
+          <>
+            <span style={{ fontSize: '14px' }}>Speed:</span>
+            <input
+              data-testid="slider-practice-speed"
+              type="range"
+              min="0.5"
+              max="1.0"
+              step="0.05"
+              value={practiceSpeed}
+              onChange={e => setPracticeSpeed(parseFloat(e.target.value))}
+              style={{ width: '120px' }}
+            />
+            <span data-testid="label-practice-speed" style={{ fontSize: '14px', minWidth: '40px' }}>
+              {Math.round(practiceSpeed * 100)}%
+            </span>
+          </>
+        )}
+      </div>
+
       {/* Level list */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
         {levels.length === 0 && (
@@ -113,7 +157,7 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
             <div
               key={level.id}
               data-testid={`level-row-${level.id}`}
-              onClick={() => onSelectLevel(level.id)}
+              onClick={() => onSelectLevel(level.id, practiceMode, practiceMode ? practiceSpeed : 1.0)}
               onMouseEnter={() => setFocusIndex(index)}
               style={{
                 display: 'flex',

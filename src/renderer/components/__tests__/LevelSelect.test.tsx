@@ -58,7 +58,7 @@ describe('LevelSelect', () => {
     const onSelectLevel = vi.fn();
     render(<LevelSelect {...defaultProps} onSelectLevel={onSelectLevel} />);
     fireEvent.click(screen.getByTestId('level-row-level-02'));
-    expect(onSelectLevel).toHaveBeenCalledWith('level-02');
+    expect(onSelectLevel).toHaveBeenCalledWith('level-02', false, 1.0);
   });
 
   it('calls onBack when Back button clicked', () => {
@@ -82,11 +82,57 @@ describe('LevelSelect', () => {
     const container = screen.getByTestId('screen-level-select');
     // First level is focused by default
     fireEvent.keyDown(container, { key: 'Enter' });
-    expect(onSelectLevel).toHaveBeenCalledWith('level-01');
+    expect(onSelectLevel).toHaveBeenCalledWith('level-01', false, 1.0);
   });
 
   it('displays "No levels found" when levels array is empty', () => {
     render(<LevelSelect {...defaultProps} levels={[]} />);
     expect(screen.getByText('No levels found')).toBeTruthy();
+  });
+
+  // Practice mode tests
+  it('practice mode toggle renders and is initially OFF', () => {
+    render(<LevelSelect {...defaultProps} />);
+    const toggle = screen.getByTestId('button-practice-toggle');
+    expect(toggle.textContent).toBe('Practice Mode: OFF');
+  });
+
+  it('clicking practice toggle switches to ON and shows speed slider', () => {
+    render(<LevelSelect {...defaultProps} />);
+    const toggle = screen.getByTestId('button-practice-toggle');
+    fireEvent.click(toggle);
+    expect(toggle.textContent).toBe('Practice Mode: ON');
+    expect(screen.getByTestId('slider-practice-speed')).toBeTruthy();
+    expect(screen.getByTestId('label-practice-speed')).toBeTruthy();
+  });
+
+  it('speed slider is hidden when practice mode is OFF', () => {
+    render(<LevelSelect {...defaultProps} />);
+    expect(screen.queryByTestId('slider-practice-speed')).toBeNull();
+  });
+
+  it('onSelectLevel called with practice params when practice mode ON', () => {
+    const onSelectLevel = vi.fn();
+    render(<LevelSelect {...defaultProps} onSelectLevel={onSelectLevel} />);
+    // Enable practice mode
+    fireEvent.click(screen.getByTestId('button-practice-toggle'));
+    // Click a level
+    fireEvent.click(screen.getByTestId('level-row-level-01'));
+    expect(onSelectLevel).toHaveBeenCalledWith('level-01', true, 0.75);
+  });
+
+  it('onSelectLevel called with normal params when practice mode OFF', () => {
+    const onSelectLevel = vi.fn();
+    render(<LevelSelect {...defaultProps} onSelectLevel={onSelectLevel} />);
+    fireEvent.click(screen.getByTestId('level-row-level-01'));
+    expect(onSelectLevel).toHaveBeenCalledWith('level-01', false, 1.0);
+  });
+
+  it('speed slider changes value between 0.5 and 1.0', () => {
+    render(<LevelSelect {...defaultProps} />);
+    fireEvent.click(screen.getByTestId('button-practice-toggle'));
+    const slider = screen.getByTestId('slider-practice-speed') as HTMLInputElement;
+    fireEvent.change(slider, { target: { value: '0.5' } });
+    expect(screen.getByTestId('label-practice-speed').textContent).toBe('50%');
   });
 });

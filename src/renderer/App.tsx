@@ -18,6 +18,8 @@ function App() {
   const [selectedLevelId, setSelectedLevelId] = useState<string | null>(null);
   const [levels, setLevels] = useState<LevelInfo[]>([]);
   const [previousBest, setPreviousBest] = useState<number | null>(null);
+  const [isPracticeMode, setIsPracticeMode] = useState(false);
+  const [practiceSpeed, setPracticeSpeed] = useState(1.0);
 
   const { setBestScore, getBestScore, loadScores } = useScoreStore();
   const { loadSettings } = useSettingsStore();
@@ -40,8 +42,10 @@ function App() {
   // Navigation handlers
   const handlePlay = () => setScreen('levelSelect');
 
-  const handleSelectLevel = (levelId: string) => {
+  const handleSelectLevel = (levelId: string, practiceMode: boolean, speed: number) => {
     setSelectedLevelId(levelId);
+    setIsPracticeMode(practiceMode);
+    setPracticeSpeed(speed);
     setGameKey(prev => prev + 1);
     setScreen('playing');
   };
@@ -50,7 +54,12 @@ function App() {
     if (!selectedLevelId) return;
     const oldBest = getBestScore(selectedLevelId);
     setPreviousBest(oldBest);
-    setBestScore(selectedLevelId, gameResults.accuracy);
+
+    // Only save scores in normal mode
+    if (!isPracticeMode) {
+      setBestScore(selectedLevelId, gameResults.accuracy);
+    }
+
     setResults(gameResults);
     setScreen('results');
   };
@@ -99,7 +108,7 @@ function App() {
 
       case 'results':
         if (!results) return null;
-        const isNewBest = previousBest === null || results.accuracy > previousBest;
+        const isNewBest = !isPracticeMode && (previousBest === null || results.accuracy > previousBest);
         return (
           <ResultsScreen
             accuracy={results.accuracy}
@@ -110,6 +119,7 @@ function App() {
             levelTitle={currentLevelTitle}
             previousBest={previousBest}
             isNewBest={isNewBest}
+            isPracticeMode={isPracticeMode}
             onReplay={handleReplay}
             onBack={handleBackToLevelSelect}
           />
@@ -130,6 +140,8 @@ function App() {
               height={600}
               levelId={selectedLevelId || 'test-level-01'}
               onComplete={handleComplete}
+              practiceMode={isPracticeMode}
+              practiceSpeed={practiceSpeed}
             />
           </div>
         );

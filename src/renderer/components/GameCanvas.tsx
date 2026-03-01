@@ -13,6 +13,8 @@ interface GameCanvasProps {
   height?: number;
   levelId?: string;
   onComplete?: (results: GameResults) => void;
+  practiceMode?: boolean;
+  practiceSpeed?: number;
 }
 
 export const GameCanvas: React.FC<GameCanvasProps> = ({
@@ -20,6 +22,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   height = 600,
   levelId = 'test-level-01',
   onComplete,
+  practiceMode = false,
+  practiceSpeed = 1.0,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [beatmap, setBeatmap] = useState<Beatmap | null>(null);
@@ -52,6 +56,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       try {
         const loadedBeatmap = await loadBeatmap(`/songs/${levelId}/beatmap.json`);
         await audioManager.loadAudio(`/songs/${levelId}/audio.mp3`);
+        audioManager.setPlaybackRate(practiceSpeed);
         setBeatmap(loadedBeatmap);
         console.log('Beatmap and audio loaded:', loadedBeatmap);
       } catch (error) {
@@ -150,6 +155,16 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
           ctx.font = '32px sans-serif';
           ctx.textAlign = 'center';
           ctx.fillText(`${gameState.combo}x`, canvas.width / 2, 50);
+        }
+
+        // Draw practice mode indicator
+        if (practiceMode) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(20, 20, 12, 0, Math.PI * 2);
+          ctx.fillStyle = '#FF0000';
+          ctx.fill();
+          ctx.restore();
         }
 
         // Draw accuracy percentage
