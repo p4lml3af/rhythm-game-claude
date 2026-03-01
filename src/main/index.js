@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const { join } = require('path')
 const fs = require('fs')
 
@@ -212,6 +212,111 @@ ipcMain.handle('beatmap:validate', async (_event, levelId) => {
     return validateBeatmap(data)
   } catch (err) {
     return { valid: false, errors: [err.message], warnings: [], stats: null }
+  }
+})
+
+// Editor IPC handlers
+
+// Select audio file via native dialog
+ipcMain.handle('editor:select-audio', async () => {
+  try {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Select Audio File',
+      filters: [{ name: 'MP3 Audio', extensions: ['mp3'] }],
+      properties: ['openFile'],
+    })
+    if (result.canceled || result.filePaths.length === 0) return null
+    const filePath = result.filePaths[0]
+    const fileName = require('path').basename(filePath)
+    return { filePath, fileName }
+  } catch (err) {
+    console.error('Failed to open audio dialog:', err.message)
+    return null
+  }
+})
+
+// Save a new level (copy audio + write beatmap)
+ipcMain.handle('editor:save-level', async (_event, { levelName, audioSourcePath, beatmap }) => {
+  try {
+    // Validate beatmap before saving
+    const validation = validateBeatmap(beatmap)
+    if (!validation.valid) {
+      return { success: false, error: `Invalid beatmap: ${validation.errors.join(', ')}` }
+    }
+
+    const songsDir = getSongsDir()
+    if (!fs.existsSync(songsDir)) {
+      fs.mkdirSync(songsDir, { recursive: true })
+    }
+
+    // Sanitize folder name
+    const folderName = levelName.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+    const levelDir = join(songsDir, folderName)
+
+    if (fs.existsSync(levelDir)) {
+      return { success: false, error: `Level folder "${folderName}" already exists` }
+    }
+
+    fs.mkdirSync(levelDir, { recursive: true })
+
+    // Copy audio file
+    fs.copyFileSync(audioSourcePath, join(levelDir, 'audio.mp3'))
+
+    // Write beatmap.json (atomic)
+    const beatmapPath = join(levelDir, 'beatmap.json')
+    const tmpPath = beatmapPath + '.tmp'
+    fs.writeFileSync(tmpPath, JSON.stringify(beatmap, null, 2), 'utf-8')
+    fs.renameSync(tmpPath, beatmapPath)
+
+    return { success: true, levelId: folderName }
+  } catch (err) {
+    console.error('Failed to save level:', err.message)
+    return { success: false, error: err.message }
+  }
+})
+
+// Load a beatmap for editing
+ipcMain.handle('editor:load-beatmap', async (_event, levelId) => {
+  try {
+    const songsDir = getSongsDir()
+    const beatmapPath = join(songsDir, levelId, 'beatmap.json')
+    const audioPath = join(songsDir, levelId, 'audio.mp3')
+
+    if (!fs.existsSync(beatmapPath)) {
+      return { error: 'Beatmap file not found' }
+    }
+
+    const data = JSON.parse(fs.readFileSync(beatmapPath, 'utf-8'))
+    return { beatmap: data, audioPath }
+  } catch (err) {
+    return { error: err.message }
+  }
+})
+
+// Update an existing level's beatmap
+ipcMain.handle('editor:update-beatmap', async (_event, { levelId, beatmap }) => {
+  try {
+    const validation = validateBeatmap(beatmap)
+    if (!validation.valid) {
+      return { success: false, error: `Invalid beatmap: ${validation.errors.join(', ')}` }
+    }
+
+    const songsDir = getSongsDir()
+    const beatmapPath = join(songsDir, levelId, 'beatmap.json')
+
+    if (!fs.existsSync(join(songsDir, levelId))) {
+      return { success: false, error: 'Level folder not found' }
+    }
+
+    // Atomic write
+    const tmpPath = beatmapPath + '.tmp'
+    fs.writeFileSync(tmpPath, JSON.stringify(beatmap, null, 2), 'utf-8')
+    fs.renameSync(tmpPath, beatmapPath)
+
+    return { success: true }
+  } catch (err) {
+    console.error('Failed to update beatmap:', err.message)
+    return { success: false, error: err.message }
   }
 })
 

@@ -46,6 +46,40 @@ export class AudioManager {
     this.isPlaying = true;
   }
 
+  playFrom(position: number, onEnded?: () => void): void {
+    if (!this.audioContext || !this.audioBuffer) {
+      console.error('Audio not loaded');
+      return;
+    }
+
+    // Stop existing playback
+    if (this.sourceNode) {
+      this.stoppedManually = true;
+      this.sourceNode.stop();
+      this.sourceNode = null;
+    }
+
+    this.stoppedManually = false;
+    this.onEndedCallback = onEnded ?? null;
+
+    this.sourceNode = this.audioContext.createBufferSource();
+    this.sourceNode.buffer = this.audioBuffer;
+    this.sourceNode.connect(this.gainNode ?? this.audioContext.destination);
+
+    this.sourceNode.onended = () => {
+      this.isPlaying = false;
+      if (!this.stoppedManually && this.onEndedCallback) {
+        this.onEndedCallback();
+      }
+    };
+
+    this.sourceNode.playbackRate.value = this.playbackRate;
+    const offset = Math.max(0, Math.min(position, this.audioBuffer.duration));
+    this.sourceNode.start(0, offset);
+    this.startTime = this.audioContext.currentTime - offset / this.playbackRate;
+    this.isPlaying = true;
+  }
+
   getCurrentTime(): number {
     if (!this.audioContext) return 0;
 

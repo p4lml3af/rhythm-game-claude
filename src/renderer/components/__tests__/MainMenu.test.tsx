@@ -35,10 +35,11 @@ describe('MainMenu', () => {
     expect(onSettings).toHaveBeenCalledOnce();
   });
 
-  it('Editor button is disabled', () => {
-    render(<MainMenu {...defaultProps} />);
-    const editorButton = screen.getByTestId('button-editor');
-    expect(editorButton).toHaveProperty('disabled', true);
+  it('calls onEditor when Editor button clicked', () => {
+    const onEditor = vi.fn();
+    render(<MainMenu {...defaultProps} onEditor={onEditor} />);
+    fireEvent.click(screen.getByTestId('button-editor'));
+    expect(onEditor).toHaveBeenCalledOnce();
   });
 
   it('supports keyboard navigation with Enter to select', () => {

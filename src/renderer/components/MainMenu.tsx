@@ -19,7 +19,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onPlay, onSettings, onEditor
   const handleAction = (index: number) => {
     if (index === 0) onPlay();
     else if (index === 1) onSettings();
-    // Editor is disabled — no action
+    else if (index === 2) onEditor();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -39,9 +39,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onPlay, onSettings, onEditor
     padding: '16px 48px',
     fontSize: '20px',
     backgroundColor: focusIndex === index ? '#444444' : '#333333',
-    color: index === 2 ? '#666666' : '#CCCCCC',
+    color: '#CCCCCC',
     border: focusIndex === index ? '1px solid #888888' : '1px solid #555555',
-    cursor: index === 2 ? 'not-allowed' : 'pointer',
+    cursor: 'pointer',
     width: '240px',
     textAlign: 'center',
     outline: 'none',
@@ -88,11 +88,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onPlay, onSettings, onEditor
         </button>
         <button
           data-testid="button-editor"
-          onClick={() => {}}
+          onClick={onEditor}
           onMouseEnter={() => setFocusIndex(2)}
-          disabled
           style={buttonStyle(2)}
-          title="Coming Soon"
         >
           Editor
         </button>
