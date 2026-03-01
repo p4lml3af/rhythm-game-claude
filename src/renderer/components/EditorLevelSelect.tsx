@@ -4,6 +4,7 @@ import type { LevelInfo } from '../../shared/types';
 interface EditorLevelSelectProps {
   levels: LevelInfo[];
   onCreateNew: () => void;
+  onRecordNew: () => void;
   onEditLevel: (levelId: string) => void;
   onBack: () => void;
 }
@@ -11,6 +12,7 @@ interface EditorLevelSelectProps {
 export const EditorLevelSelect: React.FC<EditorLevelSelectProps> = ({
   levels,
   onCreateNew,
+  onRecordNew,
   onEditLevel,
   onBack,
 }) => {
@@ -20,8 +22,8 @@ export const EditorLevelSelect: React.FC<EditorLevelSelectProps> = ({
   // Only show valid (no error) levels for editing
   const editableLevels = levels.filter((l) => !l.error);
 
-  // Total items: back(0), create-new(1), then editable levels
-  const totalItems = 2 + editableLevels.length;
+  // Total items: back(0), create-new(1), record-new(2), then editable levels
+  const totalItems = 3 + editableLevels.length;
 
   useEffect(() => {
     containerRef.current?.focus();
@@ -38,7 +40,8 @@ export const EditorLevelSelect: React.FC<EditorLevelSelectProps> = ({
       e.preventDefault();
       if (focusIndex === 0) onBack();
       else if (focusIndex === 1) onCreateNew();
-      else onEditLevel(editableLevels[focusIndex - 2].id);
+      else if (focusIndex === 2) onRecordNew();
+      else onEditLevel(editableLevels[focusIndex - 3].id);
     } else if (e.key === 'Escape') {
       onBack();
     }
@@ -95,14 +98,14 @@ export const EditorLevelSelect: React.FC<EditorLevelSelectProps> = ({
         <div style={{ width: '60px' }} />
       </div>
 
-      {/* Create New Button */}
-      <div style={{ padding: '16px 24px', borderBottom: '1px solid #333333' }}>
+      {/* Create New / Record Buttons */}
+      <div style={{ padding: '16px 24px', borderBottom: '1px solid #333333', display: 'flex', gap: '12px' }}>
         <button
           data-testid="button-create-new-level"
           onClick={onCreateNew}
           onMouseEnter={() => setFocusIndex(1)}
           style={{
-            width: '100%',
+            flex: 1,
             padding: '16px',
             fontSize: '18px',
             backgroundColor: focusIndex === 1 ? '#224422' : '#1a331a',
@@ -113,6 +116,23 @@ export const EditorLevelSelect: React.FC<EditorLevelSelectProps> = ({
           }}
         >
           + Create New Level
+        </button>
+        <button
+          data-testid="button-record-new-level"
+          onClick={onRecordNew}
+          onMouseEnter={() => setFocusIndex(2)}
+          style={{
+            flex: 1,
+            padding: '16px',
+            fontSize: '18px',
+            backgroundColor: focusIndex === 2 ? '#442222' : '#331a1a',
+            color: '#CC8888',
+            border: `1px solid ${focusIndex === 2 ? '#884444' : '#553333'}`,
+            cursor: 'pointer',
+            textAlign: 'center',
+          }}
+        >
+          Record Play-Along
         </button>
       </div>
 
@@ -131,7 +151,7 @@ export const EditorLevelSelect: React.FC<EditorLevelSelectProps> = ({
           </div>
         ) : (
           editableLevels.map((level, index) => {
-            const itemIndex = index + 2;
+            const itemIndex = index + 3;
             return (
               <div
                 key={level.id}

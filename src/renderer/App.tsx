@@ -5,14 +5,17 @@ import { MainMenu } from './components/MainMenu';
 import { LevelSelect } from './components/LevelSelect';
 import { EditorLevelSelect } from './components/EditorLevelSelect';
 import { EditorScreen } from './components/editor/EditorScreen';
+import { RecordingScreen } from './components/RecordingScreen';
+import { RecordingResults } from './components/RecordingResults';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useScoreStore } from './stores/scoreStore';
 import { useSettingsStore } from './stores/settingsStore';
 import { useEditorStore } from './stores/editorStore';
+import { useRecordingStore } from './stores/recordingStore';
 import { SettingsScreen } from './components/SettingsScreen';
 import type { GameResults, LevelInfo } from '../shared/types';
 
-type Screen = 'menu' | 'levelSelect' | 'playing' | 'results' | 'editorLevelSelect' | 'editor' | 'editorPreview';
+type Screen = 'menu' | 'levelSelect' | 'playing' | 'results' | 'editorLevelSelect' | 'editor' | 'editorPreview' | 'recording' | 'recordingResults';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('menu');
@@ -24,6 +27,8 @@ function App() {
   const [previousBest, setPreviousBest] = useState<number | null>(null);
   const [isPracticeMode, setIsPracticeMode] = useState(false);
   const [practiceSpeed, setPracticeSpeed] = useState(1.0);
+  const [recordingAudioPath, setRecordingAudioPath] = useState<string | null>(null);
+  const [recordingSongTitle, setRecordingSongTitle] = useState('');
 
   const { setBestScore, getBestScore, loadScores } = useScoreStore();
   const { loadSettings } = useSettingsStore();
@@ -151,6 +156,50 @@ function App() {
     setScreen('editor');
   };
 
+  // Recording navigation handlers
+  const handleRecordNew = async () => {
+    const result = await window.electronAPI?.selectAudioFile();
+    if (!result) return; // User cancelled
+
+    const { filePath, fileName } = result;
+    const title = fileName.replace(/\.mp3$/i, '');
+
+    useRecordingStore.getState().reset();
+    setRecordingAudioPath(filePath);
+    setRecordingSongTitle(title);
+    setScreen('recording');
+  };
+
+  const handleRecordingComplete = () => {
+    setScreen('recordingResults');
+  };
+
+  const handleRecordingSave = () => {
+    useRecordingStore.getState().reset();
+    refreshLevels();
+    setScreen('editorLevelSelect');
+  };
+
+  const handleRecordingEditInEditor = () => {
+    const beatmap = useRecordingStore.getState().toBeatmap();
+    const audioPath = useRecordingStore.getState().audioSourcePath;
+    const editorStore = useEditorStore.getState();
+    editorStore.resetEditor();
+    editorStore.loadBeatmap(beatmap, null, audioPath);
+    useRecordingStore.getState().reset();
+    setScreen('editor');
+  };
+
+  const handleRecordingReRecord = () => {
+    useRecordingStore.getState().reset();
+    setScreen('recording');
+  };
+
+  const handleRecordingDiscard = () => {
+    useRecordingStore.getState().reset();
+    setScreen('editorLevelSelect');
+  };
+
   // Get the current level's title for results screen
   const currentLevelTitle = levels.find(l => l.id === selectedLevelId)?.songTitle || selectedLevelId || '';
 
@@ -222,6 +271,7 @@ function App() {
           <EditorLevelSelect
             levels={levels}
             onCreateNew={handleEditorCreateNew}
+            onRecordNew={handleRecordNew}
             onEditLevel={handleEditorEdit}
             onBack={handleBackToMenu}
           />
@@ -255,6 +305,26 @@ function App() {
               practiceSpeed={1.0}
             />
           </div>
+        );
+
+      case 'recording':
+        return (
+          <RecordingScreen
+            audioSourcePath={recordingAudioPath || ''}
+            songTitle={recordingSongTitle}
+            onRecordingComplete={handleRecordingComplete}
+            onBack={() => setScreen('editorLevelSelect')}
+          />
+        );
+
+      case 'recordingResults':
+        return (
+          <RecordingResults
+            onSave={handleRecordingSave}
+            onEditInEditor={handleRecordingEditInEditor}
+            onReRecord={handleRecordingReRecord}
+            onDiscard={handleRecordingDiscard}
+          />
         );
     }
   };

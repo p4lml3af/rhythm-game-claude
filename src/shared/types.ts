@@ -66,6 +66,21 @@ export class BeatmapError extends Error {
   }
 }
 
+export interface RecordedKeypress {
+  timestamp: number;      // Audio time when key was pressed (seconds)
+  lane: 'left' | 'right';
+  type: 'tap' | 'hold';
+  duration?: number;       // Set after keyup for hold notes (seconds)
+}
+
+export interface RecordingSession {
+  audioSourcePath: string;
+  songTitle: string;
+  duration: number;
+  bpm: number;
+  keypresses: RecordedKeypress[];
+}
+
 export interface Settings {
   colors: {
     tap: string;        // Hex color, default '#0000FF'
