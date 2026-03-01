@@ -51,6 +51,19 @@ export interface LevelInfo {
   bpm: number;         // From beatmap.json
   duration: number;    // From beatmap.json
   noteCount: number;   // beatmap.notes.length
+  error?: string;        // Set when beatmap is invalid or audio missing
+  warnings?: string[];   // Non-blocking warnings
+}
+
+export class BeatmapError extends Error {
+  constructor(
+    message: string,
+    public readonly errors: string[],
+    public readonly warnings: string[]
+  ) {
+    super(message);
+    this.name = 'BeatmapError';
+  }
 }
 
 export interface Settings {

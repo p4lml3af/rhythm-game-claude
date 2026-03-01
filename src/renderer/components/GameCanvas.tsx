@@ -6,6 +6,7 @@ import { calculateNoteY, drawNote, isNoteOnScreen } from '../game/noteRenderer';
 import { InputHandler } from '../game/inputHandler';
 import { checkHit, findNoteInHitZone, calculateAccuracy, checkHoldStart, checkHoldComplete, findHoldNoteInHitZone, countUnprocessedNotes } from '../game/hitDetection';
 import type { Beatmap, GameState, GameResults } from '../../shared/types';
+import { BeatmapError } from '../../shared/types';
 import { useSettingsStore } from '../stores/settingsStore';
 
 interface GameCanvasProps {
@@ -13,6 +14,7 @@ interface GameCanvasProps {
   height?: number;
   levelId?: string;
   onComplete?: (results: GameResults) => void;
+  onBack?: () => void;
   practiceMode?: boolean;
   practiceSpeed?: number;
 }
@@ -22,12 +24,14 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
   height = 600,
   levelId = 'test-level-01',
   onComplete,
+  onBack,
   practiceMode = false,
   practiceSpeed = 1.0,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [beatmap, setBeatmap] = useState<Beatmap | null>(null);
   const [audioManager] = useState(() => new AudioManager());
+  const [loadError, setLoadError] = useState<string | null>(null);
   const { settings } = useSettingsStore();
   const inputHandlerRef = useRef<InputHandler | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -55,12 +59,20 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
     const loadAssets = async () => {
       try {
         const loadedBeatmap = await loadBeatmap(`/songs/${levelId}/beatmap.json`);
-        await audioManager.loadAudio(`/songs/${levelId}/audio.mp3`);
+        try {
+          await audioManager.loadAudio(`/songs/${levelId}/audio.mp3`);
+        } catch {
+          setLoadError('Failed to load audio file');
+          return;
+        }
         audioManager.setPlaybackRate(practiceSpeed);
         setBeatmap(loadedBeatmap);
-        console.log('Beatmap and audio loaded:', loadedBeatmap);
       } catch (error) {
-        console.error('Failed to load assets:', error);
+        if (error instanceof BeatmapError) {
+          setLoadError(error.errors.join('\n'));
+        } else {
+          setLoadError('Failed to load beatmap file');
+        }
       }
     };
 
@@ -331,6 +343,47 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       setIsPlaying(true);
     }
   };
+
+  if (loadError) {
+    return (
+      <div
+        data-testid="game-load-error"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width,
+          height,
+          backgroundColor: '#000000',
+          color: '#CCCCCC',
+          fontFamily: 'sans-serif',
+          textAlign: 'center',
+        }}
+      >
+        <h2 style={{ color: '#FF4444', marginBottom: '16px' }}>Failed to Load Level</h2>
+        <p style={{ fontSize: '14px', color: '#999999', whiteSpace: 'pre-line', maxWidth: '500px', marginBottom: '24px' }}>
+          {loadError}
+        </p>
+        {onBack && (
+          <button
+            data-testid="button-back-from-error"
+            onClick={onBack}
+            style={{
+              padding: '10px 20px',
+              fontSize: '16px',
+              backgroundColor: '#333333',
+              color: '#CCCCCC',
+              border: '1px solid #555555',
+              cursor: 'pointer',
+            }}
+          >
+            Back to Level Select
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div>

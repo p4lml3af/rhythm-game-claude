@@ -40,7 +40,8 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
       setFocusIndex(prev => (prev >= levels.length - 1 ? 0 : prev + 1));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (levels[focusIndex]) onSelectLevel(levels[focusIndex].id, practiceMode, practiceMode ? practiceSpeed : 1.0);
+      const level = levels[focusIndex];
+      if (level && !level.error) onSelectLevel(level.id, practiceMode, practiceMode ? practiceSpeed : 1.0);
     } else if (e.key === 'Escape') {
       e.preventDefault();
       onBack();
@@ -153,40 +154,51 @@ export const LevelSelect: React.FC<LevelSelectProps> = ({
         )}
         {levels.map((level, index) => {
           const best = getBestScore(level.id);
+          const hasError = !!level.error;
           return (
             <div
               key={level.id}
               data-testid={`level-row-${level.id}`}
-              onClick={() => onSelectLevel(level.id, practiceMode, practiceMode ? practiceSpeed : 1.0)}
+              onClick={() => !hasError && onSelectLevel(level.id, practiceMode, practiceMode ? practiceSpeed : 1.0)}
               onMouseEnter={() => setFocusIndex(index)}
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '16px 24px',
-                cursor: 'pointer',
+                cursor: hasError ? 'not-allowed' : 'pointer',
                 backgroundColor: focusIndex === index ? '#222222' : 'transparent',
                 borderBottom: '1px solid #1a1a1a',
+                opacity: hasError ? 0.5 : 1,
               }}
             >
               <div>
-                <div style={{ fontSize: '18px', color: '#FFFFFF', marginBottom: '4px' }}>
+                <div style={{ fontSize: '18px', color: hasError ? '#888888' : '#FFFFFF', marginBottom: '4px' }}>
+                  {hasError && <span style={{ color: '#FF4444', marginRight: '8px' }}>!</span>}
                   {level.songTitle}
                 </div>
-                <div style={{ fontSize: '13px', color: '#888888' }}>
-                  {level.bpm} BPM | {formatDuration(level.duration)} | {level.noteCount} notes
+                {hasError ? (
+                  <div data-testid={`level-error-${level.id}`} style={{ fontSize: '13px', color: '#FF4444' }}>
+                    {level.error}
+                  </div>
+                ) : (
+                  <div style={{ fontSize: '13px', color: '#888888' }}>
+                    {level.bpm} BPM | {formatDuration(level.duration)} | {level.noteCount} notes
+                  </div>
+                )}
+              </div>
+              {!hasError && (
+                <div
+                  data-testid={`level-best-${level.id}`}
+                  style={{
+                    fontSize: '16px',
+                    color: best !== null ? '#FFFFFF' : '#555555',
+                    fontWeight: best !== null ? 'bold' : 'normal',
+                  }}
+                >
+                  {best !== null ? `${best.toFixed(1)}%` : 'Not played'}
                 </div>
-              </div>
-              <div
-                data-testid={`level-best-${level.id}`}
-                style={{
-                  fontSize: '16px',
-                  color: best !== null ? '#FFFFFF' : '#555555',
-                  fontWeight: best !== null ? 'bold' : 'normal',
-                }}
-              >
-                {best !== null ? `${best.toFixed(1)}%` : 'Not played'}
-              </div>
+              )}
             </div>
           );
         })}

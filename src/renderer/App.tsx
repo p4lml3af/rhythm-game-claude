@@ -3,6 +3,7 @@ import { GameCanvas } from './components/GameCanvas';
 import { ResultsScreen } from './components/ResultsScreen';
 import { MainMenu } from './components/MainMenu';
 import { LevelSelect } from './components/LevelSelect';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useScoreStore } from './stores/scoreStore';
 import { useSettingsStore } from './stores/settingsStore';
 import { SettingsScreen } from './components/SettingsScreen';
@@ -140,6 +141,7 @@ function App() {
               height={600}
               levelId={selectedLevelId || 'test-level-01'}
               onComplete={handleComplete}
+              onBack={handleBackToLevelSelect}
               practiceMode={isPracticeMode}
               practiceSpeed={practiceSpeed}
             />
@@ -150,7 +152,9 @@ function App() {
 
   return (
     <>
-      {renderScreen()}
+      <ErrorBoundary onReset={handleBackToMenu}>
+        {renderScreen()}
+      </ErrorBoundary>
       <SettingsScreen
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

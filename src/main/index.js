@@ -57,16 +57,25 @@ ipcMain.handle('scores:load', async () => {
   try {
     const data = fs.readFileSync(getScoresPath(), 'utf-8')
     return JSON.parse(data)
-  } catch {
+  } catch (err) {
+    if (fs.existsSync(getScoresPath())) {
+      console.warn('Scores file corrupted, starting with empty scores:', err.message)
+    }
     return {}
   }
 })
 
 ipcMain.handle('scores:save', async (_event, scores) => {
-  const filePath = getScoresPath()
-  const tmpPath = filePath + '.tmp'
-  fs.writeFileSync(tmpPath, JSON.stringify(scores, null, 2), 'utf-8')
-  fs.renameSync(tmpPath, filePath)
+  try {
+    const filePath = getScoresPath()
+    const tmpPath = filePath + '.tmp'
+    fs.writeFileSync(tmpPath, JSON.stringify(scores, null, 2), 'utf-8')
+    fs.renameSync(tmpPath, filePath)
+    return { success: true }
+  } catch (err) {
+    console.error('Failed to save scores:', err.message)
+    return { success: false, error: err.message }
+  }
 })
 
 // Settings persistence IPC handlers
@@ -78,25 +87,40 @@ ipcMain.handle('settings:load', async () => {
   try {
     const data = fs.readFileSync(getSettingsPath(), 'utf-8')
     return JSON.parse(data)
-  } catch {
+  } catch (err) {
+    if (fs.existsSync(getSettingsPath())) {
+      console.warn('Settings file corrupted. Restored defaults:', err.message)
+    }
     return null
   }
 })
 
 ipcMain.handle('settings:save', async (_event, settings) => {
-  const filePath = getSettingsPath()
-  const tmpPath = filePath + '.tmp'
-  fs.writeFileSync(tmpPath, JSON.stringify(settings, null, 2), 'utf-8')
-  fs.renameSync(tmpPath, filePath)
+  try {
+    const filePath = getSettingsPath()
+    const tmpPath = filePath + '.tmp'
+    fs.writeFileSync(tmpPath, JSON.stringify(settings, null, 2), 'utf-8')
+    fs.renameSync(tmpPath, filePath)
+    return { success: true }
+  } catch (err) {
+    console.error('Failed to save settings:', err.message)
+    return { success: false, error: err.message }
+  }
 })
+
+// Beatmap validator (CommonJS require for main process)
+const { validateBeatmap } = require('../shared/beatmapValidator')
+
+function getSongsDir() {
+  return process.env.NODE_ENV === 'development'
+    ? join(process.cwd(), 'public', 'songs')
+    : join(__dirname, '../renderer/songs')
+}
 
 // Level discovery IPC handler
 ipcMain.handle('levels:list', async () => {
   try {
-    // In dev, songs are in public/songs/ served by Vite. Scan from project root.
-    const songsDir = process.env.NODE_ENV === 'development'
-      ? join(process.cwd(), 'public', 'songs')
-      : join(__dirname, '../renderer/songs')
+    const songsDir = getSongsDir()
 
     if (!fs.existsSync(songsDir)) return []
 
@@ -109,19 +133,61 @@ ipcMain.handle('levels:list', async () => {
       const beatmapPath = join(songsDir, entry.name, 'beatmap.json')
       const audioPath = join(songsDir, entry.name, 'audio.mp3')
 
-      if (!fs.existsSync(beatmapPath) || !fs.existsSync(audioPath)) continue
-
-      try {
-        const data = JSON.parse(fs.readFileSync(beatmapPath, 'utf-8'))
+      // Missing beatmap file
+      if (!fs.existsSync(beatmapPath)) {
         levels.push({
           id: entry.name,
-          songTitle: data.songTitle || entry.name,
-          bpm: data.bpm || 0,
-          duration: data.duration || 0,
-          noteCount: Array.isArray(data.notes) ? data.notes.length : 0,
+          songTitle: entry.name,
+          bpm: 0,
+          duration: 0,
+          noteCount: 0,
+          error: 'Missing beatmap.json',
         })
-      } catch {
-        console.warn(`Skipping invalid beatmap: ${beatmapPath}`)
+        continue
+      }
+
+      // Missing audio file
+      const hasAudio = fs.existsSync(audioPath)
+
+      let data
+      try {
+        data = JSON.parse(fs.readFileSync(beatmapPath, 'utf-8'))
+      } catch (parseErr) {
+        levels.push({
+          id: entry.name,
+          songTitle: entry.name,
+          bpm: 0,
+          duration: 0,
+          noteCount: 0,
+          error: `Invalid JSON: ${parseErr.message}`,
+        })
+        continue
+      }
+
+      // Run validation
+      const result = validateBeatmap(data)
+
+      const levelInfo = {
+        id: entry.name,
+        songTitle: data.songTitle || entry.name,
+        bpm: data.bpm || 0,
+        duration: data.duration || 0,
+        noteCount: Array.isArray(data.notes) ? data.notes.length : 0,
+      }
+
+      if (!hasAudio) {
+        levels.push({ ...levelInfo, error: 'Missing audio.mp3' })
+      } else if (!result.valid) {
+        levels.push({
+          ...levelInfo,
+          error: `Invalid beatmap: ${result.errors[0]}`,
+          warnings: result.warnings,
+        })
+      } else {
+        levels.push({
+          ...levelInfo,
+          warnings: result.warnings.length > 0 ? result.warnings : undefined,
+        })
       }
     }
 
@@ -129,6 +195,23 @@ ipcMain.handle('levels:list', async () => {
   } catch (err) {
     console.error('Failed to list levels:', err)
     return []
+  }
+})
+
+// Single beatmap validation IPC handler
+ipcMain.handle('beatmap:validate', async (_event, levelId) => {
+  try {
+    const songsDir = getSongsDir()
+    const beatmapPath = join(songsDir, levelId, 'beatmap.json')
+
+    if (!fs.existsSync(beatmapPath)) {
+      return { valid: false, errors: ['Beatmap file not found'], warnings: [], stats: null }
+    }
+
+    const data = JSON.parse(fs.readFileSync(beatmapPath, 'utf-8'))
+    return validateBeatmap(data)
+  } catch (err) {
+    return { valid: false, errors: [err.message], warnings: [], stats: null }
   }
 })
 

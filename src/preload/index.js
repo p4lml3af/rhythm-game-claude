@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadSettings: () => ipcRenderer.invoke('settings:load'),
   saveSettings: (settings) => ipcRenderer.invoke('settings:save', settings),
   listLevels: () => ipcRenderer.invoke('levels:list'),
+  validateBeatmap: (levelId) => ipcRenderer.invoke('beatmap:validate', levelId),
 });
